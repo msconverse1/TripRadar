@@ -24,9 +24,9 @@ namespace TripRadar.Controllers
         }
 
         // GET: Trip/ViewTrip/5
-        public ActionResult ViewTrip(Trip trip)
+        public ActionResult ViewTrip(int id)
         {
-            var SeeMyTrip = db.Trips.Where(t => t.TripID == trip.TripID).SingleOrDefault();
+            var SeeMyTrip = db.Trips.Where(t => t.TripID == id).SingleOrDefault();
 
             return View(SeeMyTrip);
         }

@@ -17,7 +17,7 @@ namespace TripRadar.Models
         [Display(Name = "ZipCode")]
         public int ZipCode { get; set; }
 
-        public string AddressString { get { return StreetName + City + State + ZipCode; } }
+        public string AddressString { get { return StreetName +" "+ City +" "+ State +" "+ ZipCode; } }
 
     }
 }

@@ -30,6 +30,7 @@ namespace TripRadar.Controllers
         // GET: Trip/Create
         public ActionResult Create()
         {
+            
             return View();
         }
 

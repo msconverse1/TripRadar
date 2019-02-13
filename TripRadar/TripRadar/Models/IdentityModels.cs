@@ -23,7 +23,7 @@ namespace TripRadar.Models
         public DbSet<Trip> Trip { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<Weather> Weather { get; set; }
-        
+
         public DbSet<Places> Places { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
 

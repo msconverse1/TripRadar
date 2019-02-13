@@ -58,11 +58,11 @@ namespace TripRadar
             //   appId: "",
             //   appSecret: "");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = "215072170338-fns4lnskdbkohv9vve5snslf2k9it78r.apps.googleusercontent.com",
+                ClientSecret = "106HHR9nxzHOgyZ1QPRbQOyq"
+            });
         }
     }
 }

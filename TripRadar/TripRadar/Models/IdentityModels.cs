@@ -24,10 +24,12 @@ namespace TripRadar.Models
             : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
+        public DbSet<Weather> Weathers { get; set; }
 
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }
+
     }
 }

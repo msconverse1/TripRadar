@@ -20,6 +20,7 @@ namespace TripRadar.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        DbSet<Trip> Trip { get; set; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
@@ -29,5 +30,7 @@ namespace TripRadar.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<TripRadar.Models.Trip> Trips { get; set; }
     }
 }

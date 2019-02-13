@@ -7,5 +7,6 @@ namespace TripRadar.Models
 {
     public class User
     {
+
     }
 }

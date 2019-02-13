@@ -173,9 +173,19 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\TripController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902131445412_Prop Added in Trip Model.cs" />
+    <Compile Include="Migrations\201902131445412_Prop Added in Trip Model.Designer.cs">
+      <DependentUpon>201902131445412_Prop Added in Trip Model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902131450103_Prop Added Now in Trip Model.cs" />
+    <Compile Include="Migrations\201902131450103_Prop Added Now in Trip Model.Designer.cs">
+      <DependentUpon>201902131450103_Prop Added Now in Trip Model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -243,6 +253,7 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Trip\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -259,6 +270,14 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201902131445412_Prop Added in Trip Model.resx">
+      <DependentUpon>201902131445412_Prop Added in Trip Model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902131450103_Prop Added Now in Trip Model.resx">
+      <DependentUpon>201902131450103_Prop Added Now in Trip Model.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -10,7 +10,8 @@ namespace TripRadar.Models
     {
 
         [Key]
-        public int Id { get; set; }
+        public int TripID { get; set; }
+
 
         [Display(Name = "Start Location")]
         public string StartLocation { get; set; }

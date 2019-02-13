@@ -17,7 +17,7 @@ namespace TripRadar.Models
 
         [ForeignKey("Trip")]
         [Display(Name = "trip")]
-        public string trip { get; set; }
+        public int TripID { get; set; }
         public Trip Trip { get; set; }
 
     }

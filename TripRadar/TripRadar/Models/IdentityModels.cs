@@ -22,10 +22,19 @@ namespace TripRadar.Models
     {
 
 
+
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
+
+        public DbSet<Trip> Trips { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Weather> Weathers { get; set; }
+        public DbSet<User> User { get; set; }
+        public DbSet<Places> Places { get; set; }
+
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

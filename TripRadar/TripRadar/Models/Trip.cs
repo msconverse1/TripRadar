@@ -10,7 +10,8 @@ namespace TripRadar.Models
     {
 
         [Key]
-        public int Id { get; set; }
+        public int TripID { get; set; }
+
 
         [Display(Name = "Start Location")]
         public string StartLocation { get; set; }
@@ -19,6 +20,8 @@ namespace TripRadar.Models
         public string EndLocation { get; set; }
 
         public string Name { get; set; }
+
+        public float TripTime { get; set; }
 
     }
 }

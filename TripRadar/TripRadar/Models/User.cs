@@ -14,15 +14,22 @@ namespace TripRadar.Models
         public string Name { get; set; }
         public string CurrentLocation { get; set; }
 
+
         [ForeignKey("Vehicle")]
         [Display(Name = "car")]
-        public string Car { get; set; }
+        public int VehicleId { get; set; }
         public Vehicle Vehicle { get; set; }
 
         [ForeignKey("Trip")]
-        [Display(Name = "trip")]
-        public string trip { get; set; }
+        [Display(Name = "TripID")]
+        public int TripID { get; set; }
         public Trip Trip { get; set; }
+
+
+        [ForeignKey("ApplicationUser")]
+        [Display(Name = "UserId")]
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
 
 
     }

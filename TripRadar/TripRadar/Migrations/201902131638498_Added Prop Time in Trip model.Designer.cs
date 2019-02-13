@@ -7,13 +7,13 @@ namespace TripRadar.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class WeatherModels : IMigrationMetadata
+    public sealed partial class AddedPropTimeinTripmodel : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(WeatherModels));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AddedPropTimeinTripmodel));
         
         string IMigrationMetadata.Id
         {
-            get { return "201902131453289_ Weather Models"; }
+            get { return "201902131638498_Added Prop Time in Trip model"; }
         }
         
         string IMigrationMetadata.Source

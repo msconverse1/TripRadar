@@ -7,13 +7,13 @@ namespace TripRadar.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class PropAddedinTripModel : IMigrationMetadata
+    public sealed partial class CreateVehicleTable : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(PropAddedinTripModel));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(CreateVehicleTable));
         
         string IMigrationMetadata.Id
         {
-            get { return "201902131445412_Prop Added in Trip Model"; }
+            get { return "201902131545411_Create Vehicle Table"; }
         }
         
         string IMigrationMetadata.Source

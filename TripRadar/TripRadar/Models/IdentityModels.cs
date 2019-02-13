@@ -20,21 +20,21 @@ namespace TripRadar.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        DbSet<Trip> Trip { get; set; }
+       
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
         public DbSet<Weather> Weathers { get; set; }
-
+        public DbSet<Trip> Trips { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }
 
-<<<<<<< HEAD
-        public System.Data.Entity.DbSet<TripRadar.Models.Trip> Trips { get; set; }
-=======
->>>>>>> b63abc371e0523229dda26f424c4ab272e16b95f
+
+       
+
     }
 }

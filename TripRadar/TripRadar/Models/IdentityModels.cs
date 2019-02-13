@@ -33,8 +33,7 @@ namespace TripRadar.Models
         public DbSet<Weather> Weathers { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<Places> Places { get; set; }
-
-
+        public DbSet<Location> Locations { get; set; }
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

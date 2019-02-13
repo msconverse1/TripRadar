@@ -94,5 +94,12 @@ namespace TripRadar.Controllers
                 return View();
             }
         }
+        public ActionResult WeatherInfo(int? id)
+        {
+            User driver = db.User.Where(u => u.UserId == id).FirstOrDefault();
+           // driver.Trip.
+
+            return RedirectToAction("Index");
+        }
     }
 }

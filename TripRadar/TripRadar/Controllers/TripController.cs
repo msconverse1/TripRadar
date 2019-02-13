@@ -26,13 +26,16 @@ namespace TripRadar.Controllers
         // GET: Trip/ViewTrip/5
         public ActionResult ViewTrip(Trip trip)
         {
-            return View();
+            var SeeMyTrip = db.Trips.Where(t => t.TripID == trip.TripID).SingleOrDefault();
+
+            return View(SeeMyTrip);
         }
 
 
         [HttpPost]
         public ActionResult ViewTrip()
         {
+
             return View();
         }
 
@@ -84,18 +87,22 @@ namespace TripRadar.Controllers
         }
 
         // GET: Trip/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int tripId)
         {
-            return View();
+            var DeleteThisTrip = db.Trips.Where(t => t.TripID == tripId).SingleOrDefault();
+            
+            return View(DeleteThisTrip);
         }
 
         // POST: Trip/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(Trip deleteThisTrip)
         {
             try
             {
-                // TODO: Add delete logic here
+                db.Trips.Remove(deleteThisTrip);
+                db.SaveChanges();
+                // Notify the user that the trip was sucessfully or unsucessfully removed. 
 
                 return RedirectToAction("Index");
             }

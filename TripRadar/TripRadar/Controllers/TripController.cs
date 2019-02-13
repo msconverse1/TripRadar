@@ -18,11 +18,20 @@ namespace TripRadar.Controllers
         // GET: Trip
         public ActionResult Index()
         {
+            var AllTrips = db.Trips.ToList();
+
+            return View(AllTrips);
+        }
+
+        // GET: Trip/ViewTrip/5
+        public ActionResult ViewTrip(Trip trip)
+        {
             return View();
         }
 
-        // GET: Trip/Details/5
-        public ActionResult Details(int id)
+
+        [HttpPost]
+        public ActionResult ViewTrip()
         {
             return View();
         }
@@ -42,6 +51,7 @@ namespace TripRadar.Controllers
                 Trip newTrip = new Trip();
                 newTrip.StartLocation = trip.StartLocation;
                 newTrip.EndLocation = trip.EndLocation;
+                newTrip.Name = trip.Name;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

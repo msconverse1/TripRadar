@@ -36,15 +36,38 @@ namespace TripRadar.Controllers
 
         // POST: Trip/Create
         [HttpPost]
-        public ActionResult Create(Trip trip)
+        public ActionResult Create(TripViewModel model)
         {
             try
             {
                 Trip newTrip = new Trip();
-                newTrip.StartLocation = trip.StartLocation;
-                newTrip.EndLocation = trip.EndLocation;
+                var locationFromDb = db.Locations.Where(c => c.StreetName == model.StartLocation.StreetName && c.City == model.StartLocation.City && c.ZipCode == model.StartLocation.ZipCode).SingleOrDefault();
+                if(locationFromDb != null)
+                {
+                    newTrip.StartLocation = locationFromDb.AddressString;
+                }
+                else
+                {
+                    db.Locations.Add(model.StartLocation);
+                    newTrip.StartLocation = model.StartLocation.AddressString;
+                }
+                var endLocationFromDb = db.Locations.Where(c => c.StreetName == model.EndLocation.StreetName && c.City == model.EndLocation.City && c.ZipCode == model.EndLocation.ZipCode).SingleOrDefault();
+                if (endLocationFromDb != null)
+                {
+                    newTrip.EndLocation = endLocationFromDb.AddressString;
+                }
+                else
+                {
+                    db.Locations.Add(model.EndLocation);
+                    newTrip.EndLocation = model.EndLocation.AddressString;
+                }
+                newTrip.TripTime = .15f;
+                newTrip.Name = model.Trip.Name;
+                newTrip.WeatherID = 3;
+
+                db.Trips.Add(newTrip);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return View("ViewTrip", newTrip);
             }
             catch
             {

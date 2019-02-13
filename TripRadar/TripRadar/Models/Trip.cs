@@ -13,7 +13,6 @@ namespace TripRadar.Models
         [Key]
         public int TripID { get; set; }
 
-
         [Display(Name = "Start Location")]
         public string StartLocation { get; set; }
 
@@ -30,9 +29,5 @@ namespace TripRadar.Models
 
         public Weather Weather { get; set; }
 
-        [ForeignKey("Location")]
-        [Display(Name ="Location")]
-        public int LocationId { get; set; }
-        public Location Location { get; set; }
     }
 }

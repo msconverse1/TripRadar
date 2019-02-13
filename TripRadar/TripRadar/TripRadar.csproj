@@ -173,6 +173,7 @@
     <Compile Include="Class\WeatherProperty.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TripController.cs" />
     <Compile Include="Global.asax.cs">
@@ -190,6 +191,10 @@
     <Compile Include="Migrations\201902131734322_Create Location.Designer.cs">
       <DependentUpon>201902131734322_Create Location.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902132115227_Deleted LocationFK in Trip, added Address String in Loc.cs" />
+    <Compile Include="Migrations\201902132115227_Deleted LocationFK in Trip, added Address String in Loc.Designer.cs">
+      <DependentUpon>201902132115227_Deleted LocationFK in Trip, added Address String in Loc.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -197,6 +202,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Places.cs" />
     <Compile Include="Models\Trip.cs" />
+    <Compile Include="Models\TripViewModel.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\Weather.cs" />
@@ -259,11 +265,12 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Trip\Create.cshtml" />
     <Content Include="Views\Trip\Index.cshtml" />
     <Content Include="Views\Trip\EditTrip.cshtml" />
     <Content Include="Views\Trip\ViewTrip.cshtml" />
     <Content Include="Views\Trip\Delete.cshtml" />
+    <Content Include="Views\Location\Create.cshtml" />
+    <Content Include="Views\Trip\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -290,6 +297,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902131734322_Create Location.resx">
       <DependentUpon>201902131734322_Create Location.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902132115227_Deleted LocationFK in Trip, added Address String in Loc.resx">
+      <DependentUpon>201902132115227_Deleted LocationFK in Trip, added Address String in Loc.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

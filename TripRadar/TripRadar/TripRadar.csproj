@@ -176,9 +176,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201902131424178_Creation of Weather Table.cs" />
-    <Compile Include="Migrations\201902131424178_Creation of Weather Table.Designer.cs">
-      <DependentUpon>201902131424178_Creation of Weather Table.cs</DependentUpon>
+    <Compile Include="Migrations\201902131453289_ Weather Models.cs" />
+    <Compile Include="Migrations\201902131453289_ Weather Models.Designer.cs">
+      <DependentUpon>201902131453289_ Weather Models.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -266,8 +266,8 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902131424178_Creation of Weather Table.resx">
-      <DependentUpon>201902131424178_Creation of Weather Table.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902131453289_ Weather Models.resx">
+      <DependentUpon>201902131453289_ Weather Models.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -7,13 +7,13 @@ namespace TripRadar.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class CreationofWeatherTable : IMigrationMetadata
+    public sealed partial class WeatherModels : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(CreationofWeatherTable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(WeatherModels));
         
         string IMigrationMetadata.Id
         {
-            get { return "201902131424178_Creation of Weather Table"; }
+            get { return "201902131453289_ Weather Models"; }
         }
         
         string IMigrationMetadata.Source

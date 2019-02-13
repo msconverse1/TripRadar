@@ -9,6 +9,7 @@ namespace TripRadar.Models
     public class Weather
     {
 
+
         [Key]
         public int WeatherId { get; set; }
         [Display(Name = "Tempature")]
@@ -25,5 +26,6 @@ namespace TripRadar.Models
         public float PrecipitationValue { get; set; }
         [Display(Name = "Precipitation Name")]
         public string PrecipitationName { get; set; }
+
     }
 }

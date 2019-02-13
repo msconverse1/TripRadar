@@ -24,7 +24,5 @@ namespace TripRadar.Models
         public string trip { get; set; }
         public Trip Trip { get; set; }
 
-
-
     }
 }

@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using TripRadar.Models;
 
 namespace TripRadar.Controllers
 {
     public class TripController : Controller
     {
+        ApplicationDbContext db; 
+
+        public TripController()
+        {
+            db = new ApplicationDbContext();
+        }
         // GET: Trip
         public ActionResult Index()
         {
@@ -28,12 +35,14 @@ namespace TripRadar.Controllers
 
         // POST: Trip/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(Trip trip)
         {
             try
             {
-                // TODO: Add insert logic here
-
+                Trip newTrip = new Trip();
+                newTrip.StartLocation = trip.StartLocation;
+                newTrip.EndLocation = trip.EndLocation;
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch

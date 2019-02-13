@@ -18,7 +18,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>44386</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -177,6 +177,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+
     <Compile Include="Migrations\201902131445412_Prop Added in Trip Model.cs" />
     <Compile Include="Migrations\201902131445412_Prop Added in Trip Model.Designer.cs">
       <DependentUpon>201902131445412_Prop Added in Trip Model.cs</DependentUpon>
@@ -184,6 +185,11 @@
     <Compile Include="Migrations\201902131450103_Prop Added Now in Trip Model.cs" />
     <Compile Include="Migrations\201902131450103_Prop Added Now in Trip Model.Designer.cs">
       <DependentUpon>201902131450103_Prop Added Now in Trip Model.cs</DependentUpon>
+
+    <Compile Include="Migrations\201902131453289_ Weather Models.cs" />
+    <Compile Include="Migrations\201902131453289_ Weather Models.Designer.cs">
+      <DependentUpon>201902131453289_ Weather Models.cs</DependentUpon>
+
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -272,11 +278,16 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+
     <EmbeddedResource Include="Migrations\201902131445412_Prop Added in Trip Model.resx">
       <DependentUpon>201902131445412_Prop Added in Trip Model.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902131450103_Prop Added Now in Trip Model.resx">
       <DependentUpon>201902131450103_Prop Added Now in Trip Model.cs</DependentUpon>
+
+    <EmbeddedResource Include="Migrations\201902131453289_ Weather Models.resx">
+      <DependentUpon>201902131453289_ Weather Models.cs</DependentUpon>
+
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
@@ -297,7 +308,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>52707</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:52707/</IISUrl>
+          <IISUrl>https://localhost:44386/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

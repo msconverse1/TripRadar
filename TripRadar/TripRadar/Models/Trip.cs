@@ -8,6 +8,7 @@ namespace TripRadar.Models
 {
     public class Trip
     {
+
         [Key]
         public int Id { get; set; }
 
@@ -18,5 +19,6 @@ namespace TripRadar.Models
         public string EndLocation { get; set; }
 
         public string Name { get; set; }
+
     }
 }

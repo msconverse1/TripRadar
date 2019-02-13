@@ -110,22 +110,30 @@ namespace TripRadar.Controllers
         }
 
         // GET: Trip/Delete/5
-        public ActionResult Delete(int tripId)
+
+        public ActionResult Delete(int id)
         {
-            var DeleteThisTrip = db.Trips.Where(t => t.TripID == tripId).SingleOrDefault();
+            var DeleteThisTrip = db.Trips.Where(t => t.TripID == id).Single();
             
             return View(DeleteThisTrip);
         }
 
         // POST: Trip/Delete/5
         [HttpPost]
-        public ActionResult Delete(Trip deleteThisTrip)
+        public ActionResult Delete(int id, Trip thisItem)
         {
+            var DeleteThisTrip = db.Trips.Where(t => t.TripID == id).Single();
+
             try
             {
-                db.Trips.Remove(deleteThisTrip);
-                db.SaveChanges();
-                // Notify the user that the trip was sucessfully or unsucessfully removed. 
+                if (DeleteThisTrip != null)
+                {
+                    db.Trips.Remove(DeleteThisTrip);
+                    db.SaveChanges();
+                }
+                
+                
+                
 
                 return RedirectToAction("Index");
             }

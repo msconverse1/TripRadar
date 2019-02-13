@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -23,5 +24,15 @@ namespace TripRadar.Models
 
         public float TripTime { get; set; }
 
+        [ForeignKey("Weather")]
+        [Display(Name = "Weather")]
+        public int WeatherID { get; set; }
+
+        public Weather Weather { get; set; }
+
+        [ForeignKey("Location")]
+        [Display(Name ="Location")]
+        public int LocationId { get; set; }
+        public Location Location { get; set; }
     }
 }

@@ -9,7 +9,49 @@
 <div>
     <h4>Trip</h4>
     <hr />
+
+    <div class="col-md-4">
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.StartLocation)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.StartLocation)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.EndLocation)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.EndLocation)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.TripTime)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TripTime)
+            </dd>
+
+        </dl>
+    </div>
+    <div class="col-md-8">
+        <iframe width="600" height="450" frameborder="0" style="border:0"
+                src="https://www.google.com/maps/embed/v1/directions?origin=@Model.StartLocation&destination=@Model.EndLocation&key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA" allowfullscreen></iframe>
+    </div>
+
     <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
         <dt>
             @Html.DisplayNameFor(model => model.StartLocation)
         </dt>
@@ -27,14 +69,6 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
             @Html.DisplayNameFor(model => model.TripTime)
         </dt>
 
@@ -43,6 +77,7 @@
         </dd>
 
     </dl>
+
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.TripID }) |

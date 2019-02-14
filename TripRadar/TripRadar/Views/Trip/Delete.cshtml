@@ -4,53 +4,53 @@
     ViewBag.Title = "Delete";
 }
 
-<h2>Delete</h2>
+<center>
+    <h2>Delete</h2>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Trip</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.StartLocation)
-        </dt>
+    <h3>Are you sure you want to delete this trip?</h3>
+</center>
+@using (Html.BeginForm())
+{
+    <div class="form-group">
 
-        <dd>
-            @Html.DisplayFor(model => model.StartLocation)
-        </dd>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.EndLocation)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.EndLocation)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.StartLocation)
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.StartLocation)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.EndLocation)
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.TripTime)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.EndLocation)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.TripTime)
-        </dd>
 
-    </dl>
+        </dl>
 
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
 
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
-        </div>
-    }
-</div>
+       
+        
+        
+    </div>
+    <CENTER>
+            <div class="form-actions no-color">
+                <input type="submit" value="Yes" new { id = model.TripId } class="btn btn-primary" />
+                @Html.ActionLink("No", "Index", " ", new { @class = "btn btn-primary" })
+            </div>
+        </CENTER>
+}

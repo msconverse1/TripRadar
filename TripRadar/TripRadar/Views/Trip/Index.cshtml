@@ -3,14 +3,19 @@
 @{
     ViewBag.Title = "Index";
 }
+<center>
+    <h2>My Trips</h2>
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+    <br />
+    @Html.ActionLink("Create Trip", "Create", " ", new { @class = "btn btn-primary" })
+    <br>
+    <br />
+</center>
 <table class="table">
     <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.StartLocation)
         </th>
@@ -18,34 +23,34 @@
             @Html.DisplayNameFor(model => model.EndLocation)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.TripTime)
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.StartLocation)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EndLocation)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TripTime)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.TripID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.TripID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.TripID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartLocation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndLocation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TripTime)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditTrip", new { id = item.TripID }, new { @class = "btn btn-primary" }) 
+                @Html.ActionLink("Details", "ViewTrip", new { id = item.TripID }, new { @class = "btn btn-primary" }) 
+                @Html.ActionLink("Delete", "Delete", new { id = item.TripID }, new { @class = "btn btn-primary" })
+            </td>
+        </tr>
+    }
 
 </table>
+

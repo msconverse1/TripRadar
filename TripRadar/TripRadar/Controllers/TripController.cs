@@ -1,15 +1,20 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+
 using TripRadar.Models;
 
 namespace TripRadar.Controllers
 {
     public class TripController : Controller
     {
-        ApplicationDbContext db; 
+        ApplicationDbContext db;
 
         public TripController()
         {
@@ -48,11 +53,15 @@ namespace TripRadar.Controllers
 
         // POST: Trip/Create
         [HttpPost]
-        public ActionResult Create(TripViewModel model)
+        public async Task<ActionResult> Create(TripViewModel model)
         {
             try
             {
+                //Location location = new Location();
+                //location = model.StartLocation;
+                //db.Locations.Add(location);
                 Trip newTrip = new Trip();
+                newTrip.WeatherID = await WeatherInfo(model.StartLocation);
                 var locationFromDb = db.Locations.Where(c => c.StreetName == model.StartLocation.StreetName && c.City == model.StartLocation.City && c.ZipCode == model.StartLocation.ZipCode).SingleOrDefault();
                 if(locationFromDb != null)
                 {
@@ -73,9 +82,13 @@ namespace TripRadar.Controllers
                     db.Locations.Add(model.EndLocation);
                     newTrip.EndLocation = model.EndLocation.AddressString;
                 }
+              
+              //  await WeatherInfo(model.EndLocation.ID);
                 newTrip.TripTime = .15f;
                 newTrip.Name = model.Trip.Name;
-                newTrip.WeatherID = 1;
+                
+                
+                
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
@@ -142,12 +155,60 @@ namespace TripRadar.Controllers
                 return View();
             }
         }
-        public ActionResult WeatherInfo(int? id)
+        public async Task<int> WeatherInfo(Location location)
         {
-            User driver = db.User.Where(u => u.UserId == id).FirstOrDefault();
-           // driver.Trip.
 
-            return RedirectToAction("Index");
+            
+
+            string weatherAPI = "4a219d24ec4bd8504123161859504e32";
+            // User driver = db.User.Where(u => u.UserId == id).FirstOrDefault();
+            //  var zipcode= driver.Trip.Location.ZipCode;
+            ////   string urlforzipcode = $"http://api.openweathermap.org/data/2.5/forecast?zip={53202}" +
+            // $"&mode=json&units=metric&APPID={weatherAPI}";
+            using (var client = new HttpClient())
+            {
+
+                client.BaseAddress = new Uri("http://api.openweathermap.org");
+                var response = await client.GetAsync($"/data/2.5/weather?zip={location.ZipCode}&appid={weatherAPI}&units=metric");
+                response.EnsureSuccessStatusCode();
+
+
+                var stringResult = await response.Content.ReadAsStringAsync();
+                var json = JObject.Parse(stringResult);
+                var j_weatherDesc = json["weather"][0]["description"];
+                var j_humidity = json["main"]["humidity"];
+                var j_cloudcover = json["clouds"]["all"];
+                var j_datetimeUinx = json["dt"];
+                var j_tempature = json["main"]["temp"];
+                var j_windspeed = json["wind"]["speed"];
+                var j_windDirection = json["wind"]["deg"];
+                var WeatherDesc = j_weatherDesc.ToObject<string>();
+                var Humidity = j_humidity.ToObject<float>();
+                var CloudCover = j_cloudcover.ToObject<float>();
+                var datetimeUnix = j_datetimeUinx.ToObject<double>();
+                var Tempature = j_tempature.ToObject<float>();
+                var WindSpeed = j_windspeed.ToObject<float>();
+                var WindDegs = j_windDirection.ToObject<float>();
+                Tempature = (Tempature * 1.8f) + 32;
+                System.DateTime dateTime = new System.DateTime(1970, 1, 1, 0, 0, 0, 0);
+                dateTime = dateTime.AddSeconds(datetimeUnix);
+                Weather weather = new Weather()
+                {
+                    MainTemp = Tempature,
+                    Speedvalue = WindSpeed,
+                    CloudValue = CloudCover,
+                    WindDeg = WindDegs,
+                    Humidity = Humidity,
+                    TypeOfSkys = WeatherDesc,
+                    DateTime = dateTime
+                };
+                db.Weathers.Add(weather);
+                db.SaveChanges();
+                return weather.WeatherId;
+            
+               
+            }
+          
         }
     }
 }

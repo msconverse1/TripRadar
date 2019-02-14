@@ -170,7 +170,6 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Class\WeatherProperty.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LocationController.cs" />
@@ -179,22 +178,6 @@
     <Compile Include="Controllers\VehicleController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902131613290_intials set.cs" />
-    <Compile Include="Migrations\201902131613290_intials set.Designer.cs">
-      <DependentUpon>201902131613290_intials set.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902131638498_Added Prop Time in Trip model.cs" />
-    <Compile Include="Migrations\201902131638498_Added Prop Time in Trip model.Designer.cs">
-      <DependentUpon>201902131638498_Added Prop Time in Trip model.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902131734322_Create Location.cs" />
-    <Compile Include="Migrations\201902131734322_Create Location.Designer.cs">
-      <DependentUpon>201902131734322_Create Location.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902132115227_Deleted LocationFK in Trip, added Address String in Loc.cs" />
-    <Compile Include="Migrations\201902132115227_Deleted LocationFK in Trip, added Address String in Loc.Designer.cs">
-      <DependentUpon>201902132115227_Deleted LocationFK in Trip, added Address String in Loc.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -221,6 +204,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="ClassDiagram1.cd" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -275,7 +259,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+
     <Folder Include="Views\Vehicle\" />
+
+    <Folder Include="Class\" />
+
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -289,20 +277,6 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902131613290_intials set.resx">
-      <DependentUpon>201902131613290_intials set.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902131638498_Added Prop Time in Trip model.resx">
-      <DependentUpon>201902131638498_Added Prop Time in Trip model.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902131734322_Create Location.resx">
-      <DependentUpon>201902131734322_Create Location.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902132115227_Deleted LocationFK in Trip, added Address String in Loc.resx">
-      <DependentUpon>201902132115227_Deleted LocationFK in Trip, added Address String in Loc.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

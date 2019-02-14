@@ -53,11 +53,15 @@ namespace TripRadar.Controllers
 
         // POST: Trip/Create
         [HttpPost]
-        public ActionResult Create(TripViewModel model)
+        public async Task<ActionResult> Create(TripViewModel model)
         {
             try
             {
+                //Location location = new Location();
+                //location = model.StartLocation;
+                //db.Locations.Add(location);
                 Trip newTrip = new Trip();
+                newTrip.WeatherID = await WeatherInfo(model.StartLocation);
                 var locationFromDb = db.Locations.Where(c => c.StreetName == model.StartLocation.StreetName && c.City == model.StartLocation.City && c.ZipCode == model.StartLocation.ZipCode).SingleOrDefault();
                 if(locationFromDb != null)
                 {
@@ -78,9 +82,13 @@ namespace TripRadar.Controllers
                     db.Locations.Add(model.EndLocation);
                     newTrip.EndLocation = model.EndLocation.AddressString;
                 }
+              
+              //  await WeatherInfo(model.EndLocation.ID);
                 newTrip.TripTime = .15f;
                 newTrip.Name = model.Trip.Name;
-                newTrip.WeatherID = 1;
+                
+                
+                
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
@@ -147,8 +155,11 @@ namespace TripRadar.Controllers
                 return View();
             }
         }
-        public async Task<ActionResult> WeatherInfo(int? id)
+        public async Task<int> WeatherInfo(Location location)
         {
+
+            
+
             string weatherAPI = "4a219d24ec4bd8504123161859504e32";
             // User driver = db.User.Where(u => u.UserId == id).FirstOrDefault();
             //  var zipcode= driver.Trip.Location.ZipCode;
@@ -158,13 +169,13 @@ namespace TripRadar.Controllers
             {
 
                 client.BaseAddress = new Uri("http://api.openweathermap.org");
-                var response = await client.GetAsync($"/data/2.5/weather?lat={43.03}&lon={-87.92}&appid={weatherAPI}&units=metric");
+                var response = await client.GetAsync($"/data/2.5/weather?zip={location.ZipCode}&appid={weatherAPI}&units=metric");
                 response.EnsureSuccessStatusCode();
 
 
                 var stringResult = await response.Content.ReadAsStringAsync();
                 var json = JObject.Parse(stringResult);
-                var j_weatherDesc = json["weather"]["description"];
+                var j_weatherDesc = json["weather"][0]["description"];
                 var j_humidity = json["main"]["humidity"];
                 var j_cloudcover = json["clouds"]["all"];
                 var j_datetimeUinx = json["dt"];
@@ -191,9 +202,13 @@ namespace TripRadar.Controllers
                     TypeOfSkys = WeatherDesc,
                     DateTime = dateTime
                 };
-
+                db.Weathers.Add(weather);
+                db.SaveChanges();
+                return weather.WeatherId;
+            
+               
             }
-            return RedirectToAction("Index");
+          
         }
     }
 }

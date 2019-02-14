@@ -26,5 +26,7 @@ namespace TripRadar.Models
         public float Humidity { get; set; }
         [Display(Name ="DateTime")]
         public DateTime DateTime { get; set; }
+
+      
     }
 }

@@ -178,34 +178,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201902131613290_intials set.cs" />
-    <Compile Include="Migrations\201902131613290_intials set.Designer.cs">
-      <DependentUpon>201902131613290_intials set.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902131638498_Added Prop Time in Trip model.cs" />
-    <Compile Include="Migrations\201902131638498_Added Prop Time in Trip model.Designer.cs">
-      <DependentUpon>201902131638498_Added Prop Time in Trip model.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902131734322_Create Location.cs" />
-    <Compile Include="Migrations\201902131734322_Create Location.Designer.cs">
-      <DependentUpon>201902131734322_Create Location.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902140159522_Updated Weather Table.cs" />
-    <Compile Include="Migrations\201902140159522_Updated Weather Table.Designer.cs">
-      <DependentUpon>201902140159522_Updated Weather Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902140206472_Removed unused data from Weather.cs" />
-    <Compile Include="Migrations\201902140206472_Removed unused data from Weather.Designer.cs">
-      <DependentUpon>201902140206472_Removed unused data from Weather.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902140221328_Added DateTime to Weather.cs" />
-    <Compile Include="Migrations\201902140221328_Added DateTime to Weather.Designer.cs">
-      <DependentUpon>201902140221328_Added DateTime to Weather.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902132115227_Deleted LocationFK in Trip, added Address String in Loc.cs" />
-    <Compile Include="Migrations\201902132115227_Deleted LocationFK in Trip, added Address String in Loc.Designer.cs">
-      <DependentUpon>201902132115227_Deleted LocationFK in Trip, added Address String in Loc.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -231,6 +203,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="ClassDiagram1.cd" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -299,29 +272,6 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902131613290_intials set.resx">
-      <DependentUpon>201902131613290_intials set.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902131638498_Added Prop Time in Trip model.resx">
-      <DependentUpon>201902131638498_Added Prop Time in Trip model.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902131734322_Create Location.resx">
-      <DependentUpon>201902131734322_Create Location.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902140159522_Updated Weather Table.resx">
-      <DependentUpon>201902140159522_Updated Weather Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902140206472_Removed unused data from Weather.resx">
-      <DependentUpon>201902140206472_Removed unused data from Weather.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902140221328_Added DateTime to Weather.resx">
-      <DependentUpon>201902140221328_Added DateTime to Weather.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902132115227_Deleted LocationFK in Trip, added Address String in Loc.resx">
-      <DependentUpon>201902132115227_Deleted LocationFK in Trip, added Address String in Loc.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

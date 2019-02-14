@@ -1,4 +1,4 @@
-﻿@model TripRadar.Models.Trip
+﻿@model TripRadar.Models.TripWeatherView
 
 @{
     ViewBag.Title = "ViewTrip";
@@ -13,73 +13,67 @@
     <div class="col-md-4">
         <dl class="dl-horizontal">
             <dt>
-                @Html.DisplayNameFor(model => model.StartLocation)
+                @Html.DisplayNameFor(model => model.Trip.StartLocation)
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.StartLocation)
+                @Html.DisplayFor(model => model.Trip.StartLocation)
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => model.EndLocation)
+                @Html.DisplayNameFor(model => model.Trip.EndLocation)
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.EndLocation)
+                @Html.DisplayFor(model => model.Trip.EndLocation)
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => model.TripTime)
+                @Html.DisplayNameFor(model => model.Trip.TripTime)
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.TripTime)
+                @Html.DisplayFor(model => model.Trip.TripTime)
             </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Weather.DateTime)
+            </dt>
 
+            <dd>
+                @Html.DisplayFor(model => model.Weather.DateTime)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Weather.MainTemp)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Weather.MainTemp)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Weather.Speedvalue)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Weather.Speedvalue)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Weather.Humidity)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Weather.Humidity)
+            </dd>
         </dl>
     </div>
     <div class="col-md-8">
         <iframe width="600" height="450" frameborder="0" style="border:0"
-                src="https://www.google.com/maps/embed/v1/directions?origin=@Model.StartLocation&destination=@Model.EndLocation&key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA" allowfullscreen></iframe>
+                src="https://www.google.com/maps/embed/v1/directions?origin=@Model.Trip.StartLocation&destination=@Model.Trip.EndLocation&key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA" allowfullscreen></iframe>
     </div>
 
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.StartLocation)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.StartLocation)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.EndLocation)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.EndLocation)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.TripTime)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TripTime)
-        </dd>
-
-    </dl>
+    
 
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.TripID }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Trip.TripID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

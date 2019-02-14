@@ -186,6 +186,7 @@
     <Compile Include="Models\Places.cs" />
     <Compile Include="Models\Trip.cs" />
     <Compile Include="Models\TripViewModel.cs" />
+    <Compile Include="Models\TripWeatherView.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\Weather.cs" />
@@ -255,6 +256,7 @@
     <Content Include="Views\Trip\Delete.cshtml" />
     <Content Include="Views\Location\Create.cshtml" />
     <Content Include="Views\Trip\Create.cshtml" />
+    <Content Include="Views\Trip\View.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

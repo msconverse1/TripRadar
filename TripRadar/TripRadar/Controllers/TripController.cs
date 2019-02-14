@@ -32,8 +32,14 @@ namespace TripRadar.Controllers
         public ActionResult ViewTrip(int id)
         {
             var SeeMyTrip = db.Trips.Where(t => t.TripID == id).SingleOrDefault();
-
-            return View(SeeMyTrip);
+            SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
+            
+            TripWeatherView tripWeatherView = new TripWeatherView()
+            {
+                Trip = SeeMyTrip,
+                Weather = SeeMyTrip.Weather
+            };
+            return View(tripWeatherView);
         }
 
 
@@ -86,13 +92,18 @@ namespace TripRadar.Controllers
               //  await WeatherInfo(model.EndLocation.ID);
                 newTrip.TripTime = .15f;
                 newTrip.Name = model.Trip.Name;
-                
+                newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
                 
                 
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
-                return View("ViewTrip", newTrip);
+                TripWeatherView tripWeatherView = new TripWeatherView()
+                {
+                    Trip = newTrip,
+                  Weather = newTrip.Weather
+                };
+                return View("ViewTrip", tripWeatherView);
             }
             catch
             {
@@ -192,6 +203,8 @@ namespace TripRadar.Controllers
                 Tempature = (Tempature * 1.8f) + 32;
                 System.DateTime dateTime = new System.DateTime(1970, 1, 1, 0, 0, 0, 0);
                 dateTime = dateTime.AddSeconds(datetimeUnix);
+                TimeZoneInfo timeZone = TimeZoneInfo.Local;
+                dateTime = TimeZoneInfo.ConvertTimeFromUtc(dateTime, timeZone);
                 Weather weather = new Weather()
                 {
                     MainTemp = Tempature,

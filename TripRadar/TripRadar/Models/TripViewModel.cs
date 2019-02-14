@@ -12,5 +12,7 @@ namespace TripRadar.Models
         public Location StartLocation { get; set; }
 
         public Location EndLocation { get; set; }
+
+        public Vehicle Vehicle { get; set; }
     }
 }

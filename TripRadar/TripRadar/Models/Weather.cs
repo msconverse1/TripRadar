@@ -16,16 +16,17 @@ namespace TripRadar.Models
         public float MainTemp { get; set; }
         [Display(Name = "Wind Speed")]
         public float Speedvalue { get; set; }
-        [Display(Name = "Wind Name")]
-        public string WindName { get; set; }
-        [Display(Name = "Could Cover")]
+        [Display(Name = "Wind Direction")]
+        public float WindDeg { get; set; }
+        [Display(Name = "Cloudd Cover")]
         public float CloudValue { get; set; }
-        [Display(Name = "Cloud Name")]
-        public string CloudName { get; set; }
-        [Display(Name = "Precipitation Value")]
-        public float PrecipitationValue { get; set; }
-        [Display(Name = "Precipitation Name")]
-        public string PrecipitationName { get; set; }
+        [Display(Name = "Weather Description")]
+        public string TypeOfSkys { get; set; }
+        [Display(Name = "Humidity")]
+        public float Humidity { get; set; }
+        [Display(Name ="DateTime")]
+        public DateTime DateTime { get; set; }
 
+      
     }
 }

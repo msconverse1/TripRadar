@@ -170,7 +170,6 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Class\WeatherProperty.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -189,6 +188,18 @@
     <Compile Include="Migrations\201902131734322_Create Location.cs" />
     <Compile Include="Migrations\201902131734322_Create Location.Designer.cs">
       <DependentUpon>201902131734322_Create Location.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902140159522_Updated Weather Table.cs" />
+    <Compile Include="Migrations\201902140159522_Updated Weather Table.Designer.cs">
+      <DependentUpon>201902140159522_Updated Weather Table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902140206472_Removed unused data from Weather.cs" />
+    <Compile Include="Migrations\201902140206472_Removed unused data from Weather.Designer.cs">
+      <DependentUpon>201902140206472_Removed unused data from Weather.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902140221328_Added DateTime to Weather.cs" />
+    <Compile Include="Migrations\201902140221328_Added DateTime to Weather.Designer.cs">
+      <DependentUpon>201902140221328_Added DateTime to Weather.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -267,6 +278,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Class\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -290,6 +302,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902131734322_Create Location.resx">
       <DependentUpon>201902131734322_Create Location.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902140159522_Updated Weather Table.resx">
+      <DependentUpon>201902140159522_Updated Weather Table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902140206472_Removed unused data from Weather.resx">
+      <DependentUpon>201902140206472_Removed unused data from Weather.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902140221328_Added DateTime to Weather.resx">
+      <DependentUpon>201902140221328_Added DateTime to Weather.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

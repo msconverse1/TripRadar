@@ -29,11 +29,17 @@ namespace TripRadar.Controllers
         }
 
         // GET: Trip/ViewTrip/5
-        public ActionResult ViewTrip(int id)
+        public async Task<ActionResult> ViewTrip(int id)
         {
             var SeeMyTrip = db.Trips.Where(t => t.TripID == id).SingleOrDefault();
-            SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             
+            var toUpdate = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
+            var location = db.Locations.Where(l => l.StreetName + " " + l.City + " " + l.State + " " + l.ZipCode == SeeMyTrip.StartLocation).FirstOrDefault();
+
+            db.Weathers.Remove(db.Weathers.Find(SeeMyTrip.WeatherID));
+            SeeMyTrip.WeatherID = await WeatherInfo(location);
+            // db.SaveChanges();
+            SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             TripWeatherView tripWeatherView = new TripWeatherView()
             {
                 Trip = SeeMyTrip,
@@ -76,6 +82,7 @@ namespace TripRadar.Controllers
                 else
                 {
                     db.Locations.Add(model.StartLocation);
+                    db.SaveChanges();
                     newTrip.StartLocation = model.StartLocation.AddressString;
                 }
                 var endLocationFromDb = db.Locations.Where(c => c.StreetName == model.EndLocation.StreetName && c.City == model.EndLocation.City && c.ZipCode == model.EndLocation.ZipCode).SingleOrDefault();
@@ -86,6 +93,7 @@ namespace TripRadar.Controllers
                 else
                 {
                     db.Locations.Add(model.EndLocation);
+                    db.SaveChanges();
                     newTrip.EndLocation = model.EndLocation.AddressString;
                 }
               
@@ -93,8 +101,7 @@ namespace TripRadar.Controllers
                 newTrip.TripTime = .15f;
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
-                
-                
+
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();

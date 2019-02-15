@@ -21,13 +21,13 @@ namespace TripRadar.Models
 
         public string Name { get; set; }
 
-        public float TripTime { get; set; }
+        public string TripTime { get; set; }
+        public string TripDistance { get; set; }
 
         [ForeignKey("Weather")]
         [Display(Name = "Weather")]
         public int WeatherID { get; set; }
 
         public Weather Weather { get; set; }
-
     }
 }

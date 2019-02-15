@@ -18,6 +18,8 @@ using System.Web;
 using System.Web.Mvc;
 
 using TripRadar.Models;
+using System.IO;
+using System.Xml;
 
 namespace TripRadar.Controllers
 {
@@ -38,11 +40,17 @@ namespace TripRadar.Controllers
         }
 
         // GET: Trip/ViewTrip/5
-        public ActionResult ViewTrip(int id)
+        public async Task<ActionResult> ViewTrip(int id)
         {
             var SeeMyTrip = db.Trips.Where(t => t.TripID == id).SingleOrDefault();
-            SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             
+            var toUpdate = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
+            var location = db.Locations.Where(l => l.StreetName + " " + l.City + " " + l.State + " " + l.ZipCode == SeeMyTrip.StartLocation).FirstOrDefault();
+
+           
+            SeeMyTrip.WeatherID = await WeatherInfo(location);
+            // db.SaveChanges();
+            SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             TripWeatherView tripWeatherView = new TripWeatherView()
             {
                 Trip = SeeMyTrip,
@@ -76,7 +84,12 @@ namespace TripRadar.Controllers
                 //location = model.StartLocation;
                 //db.Locations.Add(location);
                 Trip newTrip = new Trip();
+                Vehicle newVehicle = AddVehicle(model.User.Vehicle);
+                var user = GetUser();
+                newVehicle.VehicleKey = await GetVehicleKey(newVehicle);
+                newVehicle.VehicleAvgMpg = await GetVehicleMpg(newVehicle);
                 newTrip.WeatherID = await WeatherInfo(model.StartLocation);
+                var time = await GetDrivingDistance(model.StartLocation, model.EndLocation);
                 var locationFromDb = db.Locations.Where(c => c.StreetName == model.StartLocation.StreetName && c.City == model.StartLocation.City && c.ZipCode == model.StartLocation.ZipCode).SingleOrDefault();
                 if (locationFromDb != null)
                 {
@@ -85,6 +98,7 @@ namespace TripRadar.Controllers
                 else
                 {
                     db.Locations.Add(model.StartLocation);
+                    db.SaveChanges();
                     newTrip.StartLocation = model.StartLocation.AddressString;
                 }
                 var endLocationFromDb = db.Locations.Where(c => c.StreetName == model.EndLocation.StreetName && c.City == model.EndLocation.City && c.ZipCode == model.EndLocation.ZipCode).SingleOrDefault();
@@ -95,23 +109,28 @@ namespace TripRadar.Controllers
                 else
                 {
                     db.Locations.Add(model.EndLocation);
+                    db.SaveChanges();
                     newTrip.EndLocation = model.EndLocation.AddressString;
                 }
               
-              //  await WeatherInfo(model.EndLocation.ID);
-                newTrip.TripTime = .15f;
+              
+                newTrip.TripTime = time[0];
+                newTrip.TripDistance = time[1];
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
-                
-                
+                //Waiting for Matt N to add user in db, then i will un-comment the below line
+                //user.Vehicle = newVehicle;
+
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
+                user.TripID = newTrip.TripID;
                 TripWeatherView tripWeatherView = new TripWeatherView()
                 {
                     Trip = newTrip,
-                  Weather = newTrip.Weather
+                    Weather = newTrip.Weather
                 };
+                
                 return View("ViewTrip", tripWeatherView);
             }
             catch
@@ -166,7 +185,6 @@ namespace TripRadar.Controllers
         public ActionResult Delete(int id, Trip thisItem)
         {
             var DeleteThisTrip = db.Trips.Where(t => t.TripID == id).Single();
-
             try
             {
                 if (DeleteThisTrip != null)
@@ -174,10 +192,6 @@ namespace TripRadar.Controllers
                     db.Trips.Remove(DeleteThisTrip);
                     db.SaveChanges();
                 }
-
-
-
-
                 return RedirectToAction("Index");
             }
             catch
@@ -187,18 +201,17 @@ namespace TripRadar.Controllers
         }
 
 
-        public ActionResult SendEmail()
+        public ActionResult SendEmail(int id)
         {
-            //var ShareThisTrip = db.Trips.Find(id);
+            var ShareThisTrip = db.Trips.Find(id);
 
 
-            return View();
+            return View(ShareThisTrip);
         }
 
         [HttpPost]
-        public ActionResult SendEmail(string receiver, string subject, string message)
+        public ActionResult SendEmail(string receiver, string subject, string message, string URL)
         {
-
             try
             {
                 if (ModelState.IsValid)
@@ -206,8 +219,9 @@ namespace TripRadar.Controllers
                     var senderEmail = new MailAddress("Nevin.Seibel.Test@gmail.com", "Trip Radar");
                     var receiverEmail = new MailAddress(receiver, "Receiver");
                     var password = "donthackme1";
-                    var sub = subject;
-                    var body = message;
+                    ////var sub = subject;
+                    ////var body = message;
+                    //var URL = db.Trips
                     var smtp = new SmtpClient()
                     {
                         Host = "smtp.gmail.com",
@@ -219,8 +233,8 @@ namespace TripRadar.Controllers
                     };
                     using (var mess = new MailMessage(senderEmail, receiverEmail))
                     {
-                        mess.Subject = sub;
-                        mess.Body = body;
+                        mess.Subject = subject;
+                        mess.Body = "Check out my trip " + URL + "";
                         mess.IsBodyHtml = true;
                         smtp.Send(mess);
                     }
@@ -236,7 +250,7 @@ namespace TripRadar.Controllers
             return RedirectToAction("Index");
             
         }
-
+        //Get Weather based on Location call
         public async Task<int> WeatherInfo(Location location)
         {
             string weatherAPI = "4a219d24ec4bd8504123161859504e32";
@@ -287,11 +301,127 @@ namespace TripRadar.Controllers
                 db.SaveChanges();
                 return weather.WeatherId;
 
-
             }
 
         }
 
+       
+        public async Task<int> GetVehicleKey(Vehicle vehicle)
+        {
+            //Seeding for Test purposes
+            //vehicle.VehicleYear = 2012;
+            //vehicle.VehicleMake = "Honda";
+            //vehicle.VehicleModel = "Accord";
+            WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/vehicle/menu/options?year={vehicle.VehicleYear}&make={vehicle.VehicleMake}&model={vehicle.VehicleModel}");
+            // WebResponse response = await request.GetResponseAsync();
+            WebResponse response = await request.GetResponseAsync();
+
+            Stream stream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(stream);
+            string responseFromServer = reader.ReadToEnd();
+
+            //For JSON object
+            //JObject parsedString = JObject.Parse(responseFromServer);
+
+            //FOR XML
+            //XElement xElement = XElement.Parse(responseFromServer);
+            //JsonConvert.SerializeXmlNode(xElement);
+
+            //Converting XML object to JSON
+            XmlDocument document = new XmlDocument();
+            document.LoadXml(responseFromServer);
+            string jsonString = JsonConvert.SerializeXmlNode(document);
+
+            //Getting JObject as vehicle from string json
+            var parsedObject = JsonConvert.DeserializeObject<JObject>(jsonString);
+            var objectKey = parsedObject["menuItems"]["menuItem"][0]["value"];
+            vehicle.VehicleKey = Convert.ToInt32(objectKey);
+
+            return vehicle.VehicleKey;
+        }
+
+        //helper method to get avgMPG
+        public async Task<float> GetVehicleMpg(Vehicle vehicle)
+        {
+
+            WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/ympg/shared/ympgVehicle/{vehicle.VehicleKey}");
+            WebResponse response = await request.GetResponseAsync();
+
+            Stream stream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(stream);
+            string responseFromServer = reader.ReadToEnd();
+
+            XmlDocument document = new XmlDocument();
+            document.LoadXml(responseFromServer);
+            string jsonString = JsonConvert.SerializeXmlNode(document);
+
+            //Getting JObject as vehicle from string json
+            var parsedObject = JsonConvert.DeserializeObject<JObject>(jsonString);
+            var objectAvgMpg = parsedObject["yourMpgVehicle"]["avgMpg"].ToString();
+            vehicle.VehicleAvgMpg = float.Parse(objectAvgMpg);
+            return vehicle.VehicleAvgMpg;
+        }
+
+        public Vehicle AddVehicle(Vehicle vehicle)
+        {
+            
+            if (!DoesVehicleExist(vehicle))
+            {
+                Vehicle userVehicle = new Vehicle();
+                userVehicle.VehicleMake = vehicle.VehicleMake;
+                userVehicle.VehicleModel = vehicle.VehicleModel;
+                userVehicle.VehicleYear = vehicle.VehicleYear;
+                db.Vehicles.Add(userVehicle);
+                db.SaveChanges();
+                return userVehicle;
+            }
+            else
+            {
+                var userVehicle = db.Vehicles.SingleOrDefault(v => v.VehicleKey == vehicle.VehicleKey);
+                userVehicle.VehicleId = vehicle.VehicleId;
+                db.SaveChanges();
+                return userVehicle;
+            }
+        }
+
+        public bool DoesVehicleExist(Vehicle vehicle)
+        {
+            var vehicleFromDb = db.Vehicles.Where(d => d.VehicleId == vehicle.VehicleId).SingleOrDefault();
+            if (vehicleFromDb == null)
+                return false;
+            else
+                return true;
+        }
+        public async Task<string[]> GetDrivingDistance(Location origin, Location destination)
+        {
+            var Origin = origin.StreetName+" " + origin.City+" " + origin.State+" " + origin.ZipCode;
+            var Destination = destination.StreetName + " " + destination.City + " " + destination.State + " " + destination.ZipCode;
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://maps.googleapis.com");
+                var response = await client.GetAsync($" /maps/api/distancematrix/json?units=imperial&origins={Origin}  &destinations={Destination} &key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA");
+                response.EnsureSuccessStatusCode();
+
+                var stringResult = await response.Content.ReadAsStringAsync();
+                var json = JObject.Parse(stringResult);
+                 var j_tripDistance = json["rows"][0]["elements"][0]["distance"]["text"];
+                 var j_tripTime = json["rows"][0]["elements"][0]["duration"]["text"];
+                var tripDistance = j_tripDistance.ToObject<string>();
+                var tripTime = j_tripTime.ToObject<string>();
+                string[] concatDistanceTime = new string[2];
+                concatDistanceTime[0] = tripDistance;
+                concatDistanceTime[1] = tripTime;
+                    return concatDistanceTime;
+            }
+            
+        }
+
+        public User GetUser()
+        {
+            var userLoggedIn = User.Identity.GetUserId();
+            var user = db.User.SingleOrDefault(u => u.ApplicationUserId == userLoggedIn);
+            return user;
+        }
     }
 }
        

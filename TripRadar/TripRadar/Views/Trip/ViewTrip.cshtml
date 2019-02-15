@@ -36,6 +36,14 @@
                 @Html.DisplayFor(model => model.Trip.TripTime)
             </dd>
             <dt>
+                @Html.DisplayNameFor(model => model.Trip.TripDistance)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Trip.TripDistance)
+            </dd>
+
+            <dt>
                 @Html.DisplayNameFor(model => model.Weather.DateTime)
             </dt>
 
@@ -75,9 +83,16 @@
 </div>
 <p>
 
+<<<<<<< HEAD
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Back to List", "Index", " ", new { @class = "btn btn-primary" })
+    @Html.ActionLink("Share This Trip", "SendEmail", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
+   
+=======
     @Html.ActionLink("Edit", "Edit", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" }) |
     @Html.ActionLink("Back to List", "Index", " ", new { @class = "btn btn-primary" }) |
     @Html.ActionLink("Share This Trip", "SendEmail", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
 
+>>>>>>> 1f81d6103b988fbc0f498bd0fd4abc59853618e7
 
 </p>

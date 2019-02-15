@@ -1,4 +1,5 @@
-﻿@{
+﻿@model TripRadar.Models.Trip
+@{
     ViewBag.Title = "SendEmail";
 }
 
@@ -28,13 +29,18 @@
 
             <br />
 
-            <span class="form-control-static"> Message: </span>
-            <input class="form-control" type="text" name="message" />
+            @*<span class="form-control-static"> Message: </span>
+            <input class="form-control" type="text" name="message" />*@
 
             <br />
 
-            <input class="btn btn-primary" type="submit" value="Send" />
+            @*<span class="form-control-static"> URL: </span>
+            <input class="form-control" type="text" name="subject" />*@
 
+            <br />
+
+            <input class="btn btn-primary" type="submit" new { id = model.TripId } value="Send" />
+            
         </div>
     </form>
 }

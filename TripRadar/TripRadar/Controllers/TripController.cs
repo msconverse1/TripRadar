@@ -31,10 +31,18 @@ namespace TripRadar.Controllers
             db = new ApplicationDbContext();
         }
         // GET: Trip
-        public ActionResult Index()
+        public ActionResult Index(bool? ViewArchived)
         {
-            var AllTrips = db.Trips.ToList();
 
+            
+            if(ViewArchived == true)
+            {
+                ViewBag.Archived = true;
+                var ViewTheseTrips = db.Trips.Where(t => t.IsArchived == true).ToList();
+                return View(ViewTheseTrips);
+            }
+
+            var AllTrips = db.Trips.Where(t => t.IsArchived == false).ToList();
             return View(AllTrips);
         }
 
@@ -171,6 +179,7 @@ namespace TripRadar.Controllers
                 {
                     editThisTrip.StartLocation = trip.StartLocation;
                     editThisTrip.EndLocation = trip.EndLocation;
+                    editThisTrip.Name = trip.Name;
                     db.SaveChanges();
                 }
 
@@ -214,7 +223,6 @@ namespace TripRadar.Controllers
 
         public ActionResult SendEmail(int id)
         {
-            var ShareThisTrip = db.Trips.Find(id);
             return View();
         }
 
@@ -263,6 +271,7 @@ namespace TripRadar.Controllers
             return RedirectToAction("Index");
             
         }
+
         //Get Weather based on Location call
         public async Task<int> WeatherInfo(Location location)
         {
@@ -442,6 +451,41 @@ namespace TripRadar.Controllers
             var user = db.User.SingleOrDefault(u => u.ApplicationUserId == userLoggedIn);
             return user;
         }
+
+        //Get
+        public ActionResult Archive(int id)
+        {
+            Trip ArchiveThisTrip = db.Trips.Find(id);
+            return View(ArchiveThisTrip);
+        }
+
+        [HttpPost]
+        public ActionResult Archive(int id, Trip trip)
+        {
+            var ArchiveThisTrip = db.Trips.Find(id);
+            if (ArchiveThisTrip != null)
+            {
+                ArchiveThisTrip.IsArchived = true;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult UnArchive(int id)
+        {
+            Trip UnarchiveThisTrip = db.Trips.Find(id);
+            if(UnarchiveThisTrip != null)
+            {
+                UnarchiveThisTrip.IsArchived = false;
+                db.SaveChanges();
+                
+            }
+            return RedirectToAction("Index");
+        }
+
+
     }
 }
 

@@ -335,7 +335,23 @@ namespace TripRadar.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+
+                    //var Currentuser = context.Users.Where(u => u.Email == loginInfo.Email).SingleOrDefault();
+
+                    //if (Currentuser == null)
+                    //{
+                    //    User newUser = new User();
+
+                    //    newUser.Name = loginInfo.ExternalIdentity.Name;
+                    //    newUser.ApplicationUserId = Currentuser.Id;
+
+
+                    //    context.User.Add(newUser);
+                    //    context.SaveChanges();
+                    //}
+                   
                     return RedirectToLocal(returnUrl);
+
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -377,6 +393,13 @@ namespace TripRadar.Controllers
                     if (result.Succeeded)
                     {
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                        var Currentuser = context.Users.Where(u => u.Email == info.Email).SingleOrDefault();
+                            User newUser = new User();
+                            newUser.Name = info.ExternalIdentity.Name;
+                            newUser.ApplicationUserId = Currentuser.Id;
+                            context.User.Add(newUser);
+                            context.SaveChanges();
                         return RedirectToLocal(returnUrl);
                     }
                 }

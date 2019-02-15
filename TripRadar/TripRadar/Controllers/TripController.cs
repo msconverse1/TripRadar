@@ -184,16 +184,18 @@ namespace TripRadar.Controllers
         public ActionResult SendEmail(int id)
         {
             var ShareThisTrip = db.Trips.Find(id);
-
+            //string url = Url.Action("ShareThisTrip", "Trip", new System.Web.Routing.RouteValueDictionary(new { id = id }), "https", Request.Url.Host);
 
             return View(ShareThisTrip);
         }
 
         [HttpPost]
-        public ActionResult SendEmail(string receiver, string subject, string message, string URL)
+        public ActionResult SendEmail(string receiver, string subject, string message, string URL, int id)
         {
+            string url = Url.Action("ShareThisTrip", "Trip", new System.Web.Routing.RouteValueDictionary(new { id = id }), "https", Request.Url.Host);
+
             try
-            {
+            { 
                 if (ModelState.IsValid)
                 {
                     var senderEmail = new MailAddress("Nevin.Seibel.Test@gmail.com", "Trip Radar");
@@ -214,7 +216,7 @@ namespace TripRadar.Controllers
                     using (var mess = new MailMessage(senderEmail, receiverEmail))
                     {
                         mess.Subject = subject;
-                        mess.Body = "Check out my trip " + URL + "";
+                        mess.Body = "Check out my trip " + url + "";
                         mess.IsBodyHtml = true;
                         smtp.Send(mess);
                     }

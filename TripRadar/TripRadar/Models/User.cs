@@ -17,12 +17,12 @@ namespace TripRadar.Models
 
         [ForeignKey("Vehicle")]
         [Display(Name = "car")]
-        public int VehicleId { get; set; }
+        public int? VehicleId { get; set; }
         public Vehicle Vehicle { get; set; }
 
         [ForeignKey("Trip")]
         [Display(Name = "TripID")]
-        public int TripID { get; set; }
+        public int? TripID { get; set; }
         public Trip Trip { get; set; }
 
 

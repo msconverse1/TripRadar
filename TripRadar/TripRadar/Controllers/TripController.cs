@@ -83,10 +83,12 @@ namespace TripRadar.Controllers
                 //location = model.StartLocation;
                 //db.Locations.Add(location);
                 Trip newTrip = new Trip();
+
                 Vehicle newVehicle = AddVehicle(model.User.Vehicle);
                 var user = GetUser();
                 newVehicle.VehicleKey = await GetVehicleKey(newVehicle);
                 newVehicle.VehicleAvgMpg = await GetVehicleMpg(newVehicle);
+
                 newTrip.WeatherID = await WeatherInfo(model.StartLocation);
                 var time = await GetDrivingDistance(model.StartLocation, model.EndLocation);
                 var locationFromDb = db.Locations.Where(c => c.StreetName == model.StartLocation.StreetName && c.City == model.StartLocation.City && c.ZipCode == model.StartLocation.ZipCode).SingleOrDefault();
@@ -117,12 +119,15 @@ namespace TripRadar.Controllers
                 newTrip.TripDistance = time[1];
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
+
                 //Waiting for Matt N to add user in db, then i will un-comment the below line
                 //user.Vehicle = newVehicle;
 
 
+
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
+
                 user.TripID = newTrip.TripID;
                 TripWeatherView tripWeatherView = new TripWeatherView()
                 {
@@ -130,6 +135,7 @@ namespace TripRadar.Controllers
                     Weather = newTrip.Weather
                 };
                 
+               
                 return View("ViewTrip", tripWeatherView);
             }
             catch
@@ -141,16 +147,21 @@ namespace TripRadar.Controllers
         // GET: Trip/Edit/5
         public ActionResult Edit(int id)
         {
+
             var tripInDb = db.Trips.SingleOrDefault(t => t.TripID == id);
             if (tripInDb == null)
             {
                 RedirectToAction("Create");
             }
             return View(tripInDb);
+
+       
+
         }
 
         // POST: Trip/Edit/5
         [HttpPost]
+
         public ActionResult Edit(Trip trip, int id)
         {
             var editThisTrip = db.Trips.Where(t => t.TripID == id).Single();
@@ -162,6 +173,7 @@ namespace TripRadar.Controllers
                     editThisTrip.EndLocation = trip.EndLocation;
                     db.SaveChanges();
                 }
+
                 return RedirectToAction("Index");
             }
             catch
@@ -206,18 +218,22 @@ namespace TripRadar.Controllers
             return View();
         }
 
+
         [HttpPost]
-        public ActionResult SendEmail(string receiver, string subject, string message, int id)
+        public ActionResult SendEmail(string receiver, string subject, int id)
         {
+            string url = Url.Action("ShareThisTrip", "Trip", new System.Web.Routing.RouteValueDictionary(new { id = id }), "https", Request.Url.Host);
+
             try
-            {
+            { 
+
                 if (ModelState.IsValid)
                 {
                     var senderEmail = new MailAddress("Nevin.Seibel.Test@gmail.com", "Trip Radar");
                     var receiverEmail = new MailAddress(receiver, "Receiver");
                     var password = "donthackme1";
-                    //var sub = subject;
                     var body = "Check out my trip at: https://localhost:44386/trip/ViewTrip/" + id + "";
+
                     //var URL = db.Trips
                     var smtp = new SmtpClient()
                     {
@@ -298,11 +314,41 @@ namespace TripRadar.Controllers
                 db.SaveChanges();
                 return weather.WeatherId;
 
+
             }
 
         }
 
        
+
+
+            
+
+        
+        public async Task<string[]> GetDrivingDistance(Location origin, Location destination)
+        {
+            var Origin = origin.StreetName+" " + origin.City+" " + origin.State+" " + origin.ZipCode;
+            var Destination = destination.StreetName + " " + destination.City + " " + destination.State + " " + destination.ZipCode;
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://maps.googleapis.com");
+                var response = await client.GetAsync($" /maps/api/distancematrix/json?units=imperial&origins={Origin}  &destinations={Destination} &key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA");
+                response.EnsureSuccessStatusCode();
+
+                var stringResult = await response.Content.ReadAsStringAsync();
+                var json = JObject.Parse(stringResult);
+                 var j_tripDistance = json["rows"][0]["elements"][0]["distance"]["text"];
+                 var j_tripTime = json["rows"][0]["elements"][0]["duration"]["text"];
+                var tripDistance = j_tripDistance.ToObject<string>();
+                var tripTime = j_tripTime.ToObject<string>();
+                string[] concatDistanceTime = new string[2];
+                concatDistanceTime[0] = tripDistance;
+                concatDistanceTime[1] = tripTime;
+                    return concatDistanceTime;
+            }
+            
+        }
+
         public async Task<int> GetVehicleKey(Vehicle vehicle)
         {
             //Seeding for Test purposes
@@ -361,7 +407,7 @@ namespace TripRadar.Controllers
 
         public Vehicle AddVehicle(Vehicle vehicle)
         {
-            
+
             if (!DoesVehicleExist(vehicle))
             {
                 Vehicle userVehicle = new Vehicle();
@@ -388,29 +434,6 @@ namespace TripRadar.Controllers
                 return false;
             else
                 return true;
-        }
-        public async Task<string[]> GetDrivingDistance(Location origin, Location destination)
-        {
-            var Origin = origin.StreetName+" " + origin.City+" " + origin.State+" " + origin.ZipCode;
-            var Destination = destination.StreetName + " " + destination.City + " " + destination.State + " " + destination.ZipCode;
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("https://maps.googleapis.com");
-                var response = await client.GetAsync($" /maps/api/distancematrix/json?units=imperial&origins={Origin}  &destinations={Destination} &key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA");
-                response.EnsureSuccessStatusCode();
-
-                var stringResult = await response.Content.ReadAsStringAsync();
-                var json = JObject.Parse(stringResult);
-                 var j_tripDistance = json["rows"][0]["elements"][0]["distance"]["text"];
-                 var j_tripTime = json["rows"][0]["elements"][0]["duration"]["text"];
-                var tripDistance = j_tripDistance.ToObject<string>();
-                var tripTime = j_tripTime.ToObject<string>();
-                string[] concatDistanceTime = new string[2];
-                concatDistanceTime[0] = tripDistance;
-                concatDistanceTime[1] = tripTime;
-                    return concatDistanceTime;
-            }
-            
         }
 
         public User GetUser()

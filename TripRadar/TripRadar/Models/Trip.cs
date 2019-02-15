@@ -28,6 +28,5 @@ namespace TripRadar.Models
         public int WeatherID { get; set; }
 
         public Weather Weather { get; set; }
-
     }
 }

@@ -91,9 +91,34 @@
                 </div>
             </div>
         </div>
+        <div class=" form-group col-lg-12">
+            <h4><b>Enter your Vehicle Info</b></h4>
+            <p><i>would enable us to recommend you the neareast gas station stops based on your vehicle MPG and your location</i></p>
+            <div class="form-group">
+                @Html.LabelFor(model => model.User.Vehicle.VehicleMake, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.User.Vehicle.VehicleMake, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.User.Vehicle.VehicleMake, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.User.Vehicle.VehicleModel, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.User.Vehicle.VehicleModel, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.User.Vehicle.VehicleModel, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.User.Vehicle.VehicleYear, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.User.Vehicle.VehicleYear, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.User.Vehicle.VehicleYear, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </div>
 </div>

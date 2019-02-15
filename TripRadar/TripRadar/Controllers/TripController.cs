@@ -123,17 +123,27 @@ namespace TripRadar.Controllers
         // GET: Trip/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var tripInDb = db.Trips.SingleOrDefault(t => t.TripID == id);
+            if (tripInDb == null)
+            {
+                RedirectToAction("Create");
+            }
+            return View(tripInDb);
         }
 
         // POST: Trip/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(Trip trip, int id)
         {
+            var editThisTrip = db.Trips.Where(t => t.TripID == id).Single();
             try
             {
-                // TODO: Add update logic here
-
+                if(editThisTrip != null)
+                {
+                    editThisTrip.StartLocation = trip.StartLocation;
+                    editThisTrip.EndLocation = trip.EndLocation;
+                    db.SaveChanges();
+                }
                 return RedirectToAction("Index");
             }
             catch

@@ -13,6 +13,6 @@ namespace TripRadar.Models
 
         public Location EndLocation { get; set; }
 
-        public Vehicle Vehicle { get; set; }
+        public User User { get; set; }
     }
 }

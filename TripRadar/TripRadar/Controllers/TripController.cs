@@ -18,6 +18,8 @@ using System.Web;
 using System.Web.Mvc;
 
 using TripRadar.Models;
+using System.IO;
+using System.Xml;
 
 namespace TripRadar.Controllers
 {
@@ -82,6 +84,10 @@ namespace TripRadar.Controllers
                 //location = model.StartLocation;
                 //db.Locations.Add(location);
                 Trip newTrip = new Trip();
+                Vehicle newVehicle = AddVehicle(model.User.Vehicle);
+                var user = GetUser();
+                newVehicle.VehicleKey = await GetVehicleKey(newVehicle);
+                newVehicle.VehicleAvgMpg = await GetVehicleMpg(newVehicle);
                 newTrip.WeatherID = await WeatherInfo(model.StartLocation);
                 var locationFromDb = db.Locations.Where(c => c.StreetName == model.StartLocation.StreetName && c.City == model.StartLocation.City && c.ZipCode == model.StartLocation.ZipCode).SingleOrDefault();
                 if (locationFromDb != null)
@@ -110,15 +116,19 @@ namespace TripRadar.Controllers
                 newTrip.TripTime = .15f;
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
+                //Waiting for Matt N to add user in db, then i will un-comment the below line
+                //user.Vehicle = newVehicle;
 
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
+                user.TripID = newTrip.TripID;
                 TripWeatherView tripWeatherView = new TripWeatherView()
                 {
                     Trip = newTrip,
-                  Weather = newTrip.Weather
+                    Weather = newTrip.Weather
                 };
+                
                 return View("ViewTrip", tripWeatherView);
             }
             catch
@@ -284,11 +294,104 @@ namespace TripRadar.Controllers
                 db.SaveChanges();
                 return weather.WeatherId;
 
-
             }
 
         }
 
+       
+        public async Task<int> GetVehicleKey(Vehicle vehicle)
+        {
+            //Seeding for Test purposes
+            //vehicle.VehicleYear = 2012;
+            //vehicle.VehicleMake = "Honda";
+            //vehicle.VehicleModel = "Accord";
+            WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/vehicle/menu/options?year={vehicle.VehicleYear}&make={vehicle.VehicleMake}&model={vehicle.VehicleModel}");
+            // WebResponse response = await request.GetResponseAsync();
+            WebResponse response = await request.GetResponseAsync();
+
+            Stream stream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(stream);
+            string responseFromServer = reader.ReadToEnd();
+
+            //For JSON object
+            //JObject parsedString = JObject.Parse(responseFromServer);
+
+            //FOR XML
+            //XElement xElement = XElement.Parse(responseFromServer);
+            //JsonConvert.SerializeXmlNode(xElement);
+
+            //Converting XML object to JSON
+            XmlDocument document = new XmlDocument();
+            document.LoadXml(responseFromServer);
+            string jsonString = JsonConvert.SerializeXmlNode(document);
+
+            //Getting JObject as vehicle from string json
+            var parsedObject = JsonConvert.DeserializeObject<JObject>(jsonString);
+            var objectKey = parsedObject["menuItems"]["menuItem"][0]["value"];
+            vehicle.VehicleKey = Convert.ToInt32(objectKey);
+
+            return vehicle.VehicleKey;
+        }
+
+        //helper method to get avgMPG
+        public async Task<float> GetVehicleMpg(Vehicle vehicle)
+        {
+
+            WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/ympg/shared/ympgVehicle/{vehicle.VehicleKey}");
+            WebResponse response = await request.GetResponseAsync();
+
+            Stream stream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(stream);
+            string responseFromServer = reader.ReadToEnd();
+
+            XmlDocument document = new XmlDocument();
+            document.LoadXml(responseFromServer);
+            string jsonString = JsonConvert.SerializeXmlNode(document);
+
+            //Getting JObject as vehicle from string json
+            var parsedObject = JsonConvert.DeserializeObject<JObject>(jsonString);
+            var objectAvgMpg = parsedObject["yourMpgVehicle"]["avgMpg"].ToString();
+            vehicle.VehicleAvgMpg = float.Parse(objectAvgMpg);
+            return vehicle.VehicleAvgMpg;
+        }
+
+        public Vehicle AddVehicle(Vehicle vehicle)
+        {
+            
+            if (!DoesVehicleExist(vehicle))
+            {
+                Vehicle userVehicle = new Vehicle();
+                userVehicle.VehicleMake = vehicle.VehicleMake;
+                userVehicle.VehicleModel = vehicle.VehicleModel;
+                userVehicle.VehicleYear = vehicle.VehicleYear;
+                db.Vehicles.Add(userVehicle);
+                db.SaveChanges();
+                return userVehicle;
+            }
+            else
+            {
+                var userVehicle = db.Vehicles.SingleOrDefault(v => v.VehicleKey == vehicle.VehicleKey);
+                userVehicle.VehicleId = vehicle.VehicleId;
+                db.SaveChanges();
+                return userVehicle;
+            }
+        }
+
+        public bool DoesVehicleExist(Vehicle vehicle)
+        {
+            var vehicleFromDb = db.Vehicles.Where(d => d.VehicleId == vehicle.VehicleId).SingleOrDefault();
+            if (vehicleFromDb == null)
+                return false;
+            else
+                return true;
+        }
+
+        public User GetUser()
+        {
+            var userLoggedIn = User.Identity.GetUserId();
+            var user = db.User.SingleOrDefault(u => u.ApplicationUserId == userLoggedIn);
+            return user;
+        }
     }
 }
        

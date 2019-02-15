@@ -211,10 +211,6 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Migrations\201902151447094_Added Prop avgMpg in Vehicle.cs" />
-    <Compile Include="Migrations\201902151447094_Added Prop avgMpg in Vehicle.Designer.cs">
-      <DependentUpon>201902151447094_Added Prop avgMpg in Vehicle.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\Email.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -326,11 +322,6 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902151447094_Added Prop avgMpg in Vehicle.resx">
-      <DependentUpon>201902151447094_Added Prop avgMpg in Vehicle.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

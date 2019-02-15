@@ -20,7 +20,7 @@ namespace TripRadar.Models
         [Display(Name = "VehicleKey")]
         public int VehicleKey { get; set; }
 
-
-
+        [Display(Name = "Average MPG")]
+        public float VehicleAvgMpg { get; set; }
     }
 }

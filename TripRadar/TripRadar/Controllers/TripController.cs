@@ -45,7 +45,7 @@ namespace TripRadar.Controllers
             var toUpdate = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             var location = db.Locations.Where(l => l.StreetName + " " + l.City + " " + l.State + " " + l.ZipCode == SeeMyTrip.StartLocation).FirstOrDefault();
 
-            db.Weathers.Remove(db.Weathers.Find(SeeMyTrip.WeatherID));
+           
             SeeMyTrip.WeatherID = await WeatherInfo(location);
             // db.SaveChanges();
             SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();

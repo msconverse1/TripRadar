@@ -156,7 +156,6 @@ namespace TripRadar.Controllers
         public ActionResult Delete(int id, Trip thisItem)
         {
             var DeleteThisTrip = db.Trips.Where(t => t.TripID == id).Single();
-
             try
             {
                 if (DeleteThisTrip != null)
@@ -164,10 +163,6 @@ namespace TripRadar.Controllers
                     db.Trips.Remove(DeleteThisTrip);
                     db.SaveChanges();
                 }
-
-
-
-
                 return RedirectToAction("Index");
             }
             catch
@@ -177,18 +172,17 @@ namespace TripRadar.Controllers
         }
 
 
-        public ActionResult SendEmail()
+        public ActionResult SendEmail(int id)
         {
-            //var ShareThisTrip = db.Trips.Find(id);
+            var ShareThisTrip = db.Trips.Find(id);
 
 
-            return View();
+            return View(ShareThisTrip);
         }
 
         [HttpPost]
-        public ActionResult SendEmail(string receiver, string subject, string message)
+        public ActionResult SendEmail(string receiver, string subject, string message, string URL)
         {
-
             try
             {
                 if (ModelState.IsValid)
@@ -196,8 +190,9 @@ namespace TripRadar.Controllers
                     var senderEmail = new MailAddress("Nevin.Seibel.Test@gmail.com", "Trip Radar");
                     var receiverEmail = new MailAddress(receiver, "Receiver");
                     var password = "donthackme1";
-                    var sub = subject;
-                    var body = message;
+                    ////var sub = subject;
+                    ////var body = message;
+                    //var URL = db.Trips
                     var smtp = new SmtpClient()
                     {
                         Host = "smtp.gmail.com",
@@ -209,8 +204,8 @@ namespace TripRadar.Controllers
                     };
                     using (var mess = new MailMessage(senderEmail, receiverEmail))
                     {
-                        mess.Subject = sub;
-                        mess.Body = body;
+                        mess.Subject = subject;
+                        mess.Body = "Check out my trip " + URL + "";
                         mess.IsBodyHtml = true;
                         smtp.Send(mess);
                     }

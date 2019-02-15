@@ -74,12 +74,10 @@
 
 </div>
 <p>
-<<<<<<< HEAD
-    @Html.ActionLink("Edit", "Edit", new { id = Model.TripID }, new { @class = "btn btn-primary" }) |
-    @Html.ActionLink("Back to List", "Index", " ", new { @class = "btn btn-primary" }) |
-    @Html.ActionLink("Share This Trip", "SendEmail", new { id = Model.TripID }, new { @class = "btn btn-primary" })
-=======
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Trip.TripID }) |
-    @Html.ActionLink("Back to List", "Index")
->>>>>>> d9aa79069dc3341c170ab1a4b295c64bdbf4eb46
+
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Back to List", "Index", " ", new { @class = "btn btn-primary" })
+    @Html.ActionLink("Share This Trip", "SendEmail", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
+   
+
 </p>

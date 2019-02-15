@@ -74,6 +74,10 @@
 
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Trip.TripID }) |
-    @Html.ActionLink("Back to List", "Index")
+
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" }) |
+    @Html.ActionLink("Back to List", "Index", " ", new { @class = "btn btn-primary" }) |
+    @Html.ActionLink("Share This Trip", "SendEmail", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
+
+
 </p>

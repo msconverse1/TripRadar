@@ -1,3 +1,11 @@
+
+﻿using Microsoft.AspNet.Identity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -5,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+
 using System.Web;
 using System.Web.Mvc;
 
@@ -59,7 +68,7 @@ namespace TripRadar.Controllers
         // GET: Trip/Create
         public ActionResult Create()
         {
-            
+
             return View();
         }
 
@@ -75,7 +84,7 @@ namespace TripRadar.Controllers
                 Trip newTrip = new Trip();
                 newTrip.WeatherID = await WeatherInfo(model.StartLocation);
                 var locationFromDb = db.Locations.Where(c => c.StreetName == model.StartLocation.StreetName && c.City == model.StartLocation.City && c.ZipCode == model.StartLocation.ZipCode).SingleOrDefault();
-                if(locationFromDb != null)
+                if (locationFromDb != null)
                 {
                     newTrip.StartLocation = locationFromDb.AddressString;
                 }
@@ -145,7 +154,7 @@ namespace TripRadar.Controllers
         public ActionResult Delete(int id)
         {
             var DeleteThisTrip = db.Trips.Where(t => t.TripID == id).Single();
-            
+
             return View(DeleteThisTrip);
         }
 
@@ -162,9 +171,9 @@ namespace TripRadar.Controllers
                     db.Trips.Remove(DeleteThisTrip);
                     db.SaveChanges();
                 }
-                
-                
-                
+
+
+
 
                 return RedirectToAction("Index");
             }
@@ -173,11 +182,60 @@ namespace TripRadar.Controllers
                 return View();
             }
         }
-        public async Task<int> WeatherInfo(Location location)
+
+
+        public ActionResult SendEmail()
+        {
+            //var ShareThisTrip = db.Trips.Find(id);
+
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult SendEmail(string receiver, string subject, string message)
         {
 
-            
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var senderEmail = new MailAddress("Nevin.Seibel.Test@gmail.com", "Trip Radar");
+                    var receiverEmail = new MailAddress(receiver, "Receiver");
+                    var password = "donthackme1";
+                    var sub = subject;
+                    var body = message;
+                    var smtp = new SmtpClient()
+                    {
+                        Host = "smtp.gmail.com",
+                        Port = 587,
+                        EnableSsl = true,
+                        DeliveryMethod = SmtpDeliveryMethod.Network,
+                        Credentials = new NetworkCredential(senderEmail.Address, password),
+                        Timeout = 20000
+                    };
+                    using (var mess = new MailMessage(senderEmail, receiverEmail))
+                    {
+                        mess.Subject = sub;
+                        mess.Body = body;
+                        mess.IsBodyHtml = true;
+                        smtp.Send(mess);
+                    }
+                }
+                
+            }
 
+            catch (Exception)
+            {
+                ViewBag.Error = "Some Error";
+            }
+
+            return RedirectToAction("Index");
+            
+        }
+
+        public async Task<int> WeatherInfo(Location location)
+        {
             string weatherAPI = "4a219d24ec4bd8504123161859504e32";
             // User driver = db.User.Where(u => u.UserId == id).FirstOrDefault();
             //  var zipcode= driver.Trip.Location.ZipCode;
@@ -225,10 +283,13 @@ namespace TripRadar.Controllers
                 db.Weathers.Add(weather);
                 db.SaveChanges();
                 return weather.WeatherId;
-            
-               
+
+
             }
-          
+
         }
+
     }
 }
+       
+

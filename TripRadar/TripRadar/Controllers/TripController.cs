@@ -38,11 +38,17 @@ namespace TripRadar.Controllers
         }
 
         // GET: Trip/ViewTrip/5
-        public ActionResult ViewTrip(int id)
+        public async Task<ActionResult> ViewTrip(int id)
         {
             var SeeMyTrip = db.Trips.Where(t => t.TripID == id).SingleOrDefault();
-            SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             
+            var toUpdate = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
+            var location = db.Locations.Where(l => l.StreetName + " " + l.City + " " + l.State + " " + l.ZipCode == SeeMyTrip.StartLocation).FirstOrDefault();
+
+           
+            SeeMyTrip.WeatherID = await WeatherInfo(location);
+            // db.SaveChanges();
+            SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             TripWeatherView tripWeatherView = new TripWeatherView()
             {
                 Trip = SeeMyTrip,
@@ -77,6 +83,7 @@ namespace TripRadar.Controllers
                 //db.Locations.Add(location);
                 Trip newTrip = new Trip();
                 newTrip.WeatherID = await WeatherInfo(model.StartLocation);
+                var time = await GetDrivingDistance(model.StartLocation, model.EndLocation);
                 var locationFromDb = db.Locations.Where(c => c.StreetName == model.StartLocation.StreetName && c.City == model.StartLocation.City && c.ZipCode == model.StartLocation.ZipCode).SingleOrDefault();
                 if (locationFromDb != null)
                 {
@@ -85,6 +92,7 @@ namespace TripRadar.Controllers
                 else
                 {
                     db.Locations.Add(model.StartLocation);
+                    db.SaveChanges();
                     newTrip.StartLocation = model.StartLocation.AddressString;
                 }
                 var endLocationFromDb = db.Locations.Where(c => c.StreetName == model.EndLocation.StreetName && c.City == model.EndLocation.City && c.ZipCode == model.EndLocation.ZipCode).SingleOrDefault();
@@ -95,15 +103,16 @@ namespace TripRadar.Controllers
                 else
                 {
                     db.Locations.Add(model.EndLocation);
+                    db.SaveChanges();
                     newTrip.EndLocation = model.EndLocation.AddressString;
                 }
               
-              //  await WeatherInfo(model.EndLocation.ID);
-                newTrip.TripTime = .15f;
+              
+                newTrip.TripTime = time[0];
+                newTrip.TripDistance = time[1];
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
-                
-                
+
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
@@ -221,7 +230,7 @@ namespace TripRadar.Controllers
             return RedirectToAction("Index");
             
         }
-
+        //Get Weather based on Location call
         public async Task<int> WeatherInfo(Location location)
         {
             string weatherAPI = "4a219d24ec4bd8504123161859504e32";
@@ -275,6 +284,29 @@ namespace TripRadar.Controllers
 
             }
 
+        }
+        public async Task<string[]> GetDrivingDistance(Location origin, Location destination)
+        {
+            var Origin = origin.StreetName+" " + origin.City+" " + origin.State+" " + origin.ZipCode;
+            var Destination = destination.StreetName + " " + destination.City + " " + destination.State + " " + destination.ZipCode;
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://maps.googleapis.com");
+                var response = await client.GetAsync($" /maps/api/distancematrix/json?units=imperial&origins={Origin}  &destinations={Destination} &key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA");
+                response.EnsureSuccessStatusCode();
+
+                var stringResult = await response.Content.ReadAsStringAsync();
+                var json = JObject.Parse(stringResult);
+                 var j_tripDistance = json["rows"][0]["elements"][0]["distance"]["text"];
+                 var j_tripTime = json["rows"][0]["elements"][0]["duration"]["text"];
+                var tripDistance = j_tripDistance.ToObject<string>();
+                var tripTime = j_tripTime.ToObject<string>();
+                string[] concatDistanceTime = new string[2];
+                concatDistanceTime[0] = tripDistance;
+                concatDistanceTime[1] = tripTime;
+                    return concatDistanceTime;
+            }
+            
         }
 
     }

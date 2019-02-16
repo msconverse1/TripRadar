@@ -1,13 +1,31 @@
 ﻿@model IEnumerable<TripRadar.Models.Trip>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Archived";
+
 }
+
 <center>
-    <h2>My Trips</h2>
+    @{
+        if (ViewBag.Archived == true)
+        {
+            <h2>My Archived Trips</h2>
+        }
+        else
+        { <h2>My Trips</h2> }
+
+    }
 
     <br />
-    @Html.ActionLink("Create Trip", "Create", " ", new { @class = "btn btn-primary" })
+    @{
+
+        if (ViewBag.Archived != true)
+        {
+            @Html.ActionLink("Create Trip", "Create", " ", new { @class = "btn btn-primary" })
+        }
+
+    }
+    
     <br>
     <br />
 </center>
@@ -45,12 +63,34 @@
                 @Html.DisplayFor(modelItem => item.TripTime)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.TripID }, new { @class = "btn btn-primary" }) 
-                @Html.ActionLink("Details", "ViewTrip", new { id = item.TripID }, new { @class = "btn btn-primary" }) 
-                @Html.ActionLink("Delete", "Delete", new { id = item.TripID }, new { @class = "btn btn-primary" })
+                @{
+                    if (item.IsArchived == false)
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = item.TripID }, new { @class = "btn btn-primary" })
+                        @Html.ActionLink("Details", "ViewTrip", new { id = item.TripID }, new { @class = "btn btn-primary" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.TripID }, new { @class = "btn btn-primary" })
+                    }
+                    else { @Html.ActionLink("Un-Archive", "UnArchive", new { id = item.TripID }, new { @class = "btn btn-primary" })}
+                }
+               
             </td>
         </tr>
     }
 
 </table>
+<br />
+<br />
+<br />
 
+<center>
+    @{
+        if (ViewBag.Archived == true)
+        {
+
+            @Html.ActionLink("Back", "Index", " ", new { @class = "btn btn-primary" })
+        }
+        else
+        { @Html.ActionLink("View Archived Trips", "Index", new { ViewArchived = true }, new { @class = "btn btn-primary" })}
+    }
+
+</center>

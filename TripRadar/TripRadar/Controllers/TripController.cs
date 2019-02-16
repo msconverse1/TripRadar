@@ -31,10 +31,18 @@ namespace TripRadar.Controllers
             db = new ApplicationDbContext();
         }
         // GET: Trip
-        public ActionResult Index()
+        public ActionResult Index(bool? ViewArchived)
         {
-            var AllTrips = db.Trips.ToList();
 
+            
+            if(ViewArchived == true)
+            {
+                ViewBag.Archived = true;
+                var ViewTheseTrips = db.Trips.Where(t => t.IsArchived == true).ToList();
+                return View(ViewTheseTrips);
+            }
+
+            var AllTrips = db.Trips.Where(t => t.IsArchived == false).ToList();
             return View(AllTrips);
         }
 
@@ -83,6 +91,12 @@ namespace TripRadar.Controllers
                 //location = model.StartLocation;
                 //db.Locations.Add(location);
                 Trip newTrip = new Trip();
+
+                Vehicle newVehicle = AddVehicle(model.User.Vehicle);
+                var user = GetUser();
+                newVehicle.VehicleKey = await GetVehicleKey(newVehicle);
+                newVehicle.VehicleAvgMpg = await GetVehicleMpg(newVehicle);
+
                 newTrip.WeatherID = await WeatherInfo(model.StartLocation);
                 var time = await GetDrivingDistance(model.StartLocation, model.EndLocation);
                 var locationFromDb = db.Locations.Where(c => c.StreetName == model.StartLocation.StreetName && c.City == model.StartLocation.City && c.ZipCode == model.StartLocation.ZipCode).SingleOrDefault();
@@ -114,14 +128,22 @@ namespace TripRadar.Controllers
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
 
+                //Waiting for Matt N to add user in db, then i will un-comment the below line
+                //user.Vehicle = newVehicle;
+
+
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
+
+                user.TripID = newTrip.TripID;
                 TripWeatherView tripWeatherView = new TripWeatherView()
                 {
                     Trip = newTrip,
-                  Weather = newTrip.Weather
+                    Weather = newTrip.Weather
                 };
+                
+               
                 return View("ViewTrip", tripWeatherView);
             }
             catch
@@ -133,16 +155,33 @@ namespace TripRadar.Controllers
         // GET: Trip/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+
+            var tripInDb = db.Trips.SingleOrDefault(t => t.TripID == id);
+            if (tripInDb == null)
+            {
+                RedirectToAction("Create");
+            }
+            return View(tripInDb);
+
+       
+
         }
 
         // POST: Trip/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+
+        public ActionResult Edit(Trip trip, int id)
         {
+            var editThisTrip = db.Trips.Where(t => t.TripID == id).Single();
             try
             {
-                // TODO: Add update logic here
+                if(editThisTrip != null)
+                {
+                    editThisTrip.StartLocation = trip.StartLocation;
+                    editThisTrip.EndLocation = trip.EndLocation;
+                    editThisTrip.Name = trip.Name;
+                    db.SaveChanges();
+                }
 
                 return RedirectToAction("Index");
             }
@@ -184,26 +223,25 @@ namespace TripRadar.Controllers
 
         public ActionResult SendEmail(int id)
         {
-            var ShareThisTrip = db.Trips.Find(id);
-            //string url = Url.Action("ShareThisTrip", "Trip", new System.Web.Routing.RouteValueDictionary(new { id = id }), "https", Request.Url.Host);
-
-            return View(ShareThisTrip);
+            return View();
         }
 
+
         [HttpPost]
-        public ActionResult SendEmail(string receiver, string subject, string message, string URL, int id)
+        public ActionResult SendEmail(string receiver, string subject, int id)
         {
             string url = Url.Action("ShareThisTrip", "Trip", new System.Web.Routing.RouteValueDictionary(new { id = id }), "https", Request.Url.Host);
 
             try
             { 
+
                 if (ModelState.IsValid)
                 {
                     var senderEmail = new MailAddress("Nevin.Seibel.Test@gmail.com", "Trip Radar");
                     var receiverEmail = new MailAddress(receiver, "Receiver");
                     var password = "donthackme1";
-                    ////var sub = subject;
-                    ////var body = message;
+                    var body = "Check out my trip at: https://localhost:44386/trip/ViewTrip/" + id + "";
+
                     //var URL = db.Trips
                     var smtp = new SmtpClient()
                     {
@@ -217,7 +255,7 @@ namespace TripRadar.Controllers
                     using (var mess = new MailMessage(senderEmail, receiverEmail))
                     {
                         mess.Subject = subject;
-                        mess.Body = "Check out my trip " + url + "";
+                        mess.Body = body;
                         mess.IsBodyHtml = true;
                         smtp.Send(mess);
                     }
@@ -233,6 +271,7 @@ namespace TripRadar.Controllers
             return RedirectToAction("Index");
             
         }
+
         //Get Weather based on Location call
         public async Task<int> WeatherInfo(Location location)
         {
@@ -310,6 +349,7 @@ namespace TripRadar.Controllers
             }
             
         }
+
         public async Task<int> GetVehicleKey(Vehicle vehicle)
         {
             //Seeding for Test purposes
@@ -403,6 +443,41 @@ namespace TripRadar.Controllers
             var user = db.User.SingleOrDefault(u => u.ApplicationUserId == userLoggedIn);
             return user;
         }
+
+        //Get
+        public ActionResult Archive(int id)
+        {
+            Trip ArchiveThisTrip = db.Trips.Find(id);
+            return View(ArchiveThisTrip);
+        }
+
+        [HttpPost]
+        public ActionResult Archive(int id, Trip trip)
+        {
+            var ArchiveThisTrip = db.Trips.Find(id);
+            if (ArchiveThisTrip != null)
+            {
+                ArchiveThisTrip.IsArchived = true;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult UnArchive(int id)
+        {
+            Trip UnarchiveThisTrip = db.Trips.Find(id);
+            if(UnarchiveThisTrip != null)
+            {
+                UnarchiveThisTrip.IsArchived = false;
+                db.SaveChanges();
+                
+            }
+            return RedirectToAction("Index");
+        }
+
+
     }
 }
-   
+

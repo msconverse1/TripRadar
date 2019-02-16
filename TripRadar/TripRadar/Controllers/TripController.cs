@@ -284,7 +284,6 @@ namespace TripRadar.Controllers
                 db.SaveChanges();
                 return weather.WeatherId;
 
-
             }
 
         }

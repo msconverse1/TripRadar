@@ -17,7 +17,15 @@
     }
 
     <br />
-    @Html.ActionLink("Create Trip", "Create", " ", new { @class = "btn btn-primary" })
+    @{
+
+        if (ViewBag.Archived != true)
+        {
+            @Html.ActionLink("Create Trip", "Create", " ", new { @class = "btn btn-primary" })
+        }
+
+    }
+    
     <br>
     <br />
 </center>

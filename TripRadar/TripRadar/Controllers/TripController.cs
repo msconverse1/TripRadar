@@ -85,18 +85,19 @@ namespace TripRadar.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(TripViewModel model)
         {
-            //try
-            //{
-            //    //Location location = new Location();
+            try
+            {
+                //Location location = new Location();
                 //location = model.StartLocation;
                 //db.Locations.Add(location);
                 Trip newTrip = new Trip();
-
-                Vehicle newVehicle = AddVehicle(model.User.Vehicle);
                 var user = GetUser();
-                newVehicle.VehicleKey = await GetVehicleKey(newVehicle);
-                newVehicle.VehicleAvgMpg = await GetVehicleMpg(newVehicle);
-
+                if(model.User.Vehicle != null) //if user does not enter vehicle info
+                {
+                    Vehicle newVehicle = AddVehicle(model.User.Vehicle);
+                    newVehicle.VehicleKey = await GetVehicleKey(newVehicle);
+                    newVehicle.VehicleAvgMpg = await GetVehicleMpg(newVehicle);
+                }
                 newTrip.WeatherID = await WeatherInfo(model.StartLocation);
                 var time = await GetDrivingDistance(model.StartLocation, model.EndLocation);
                 var locationFromDb = db.Locations.Where(c => c.StreetName == model.StartLocation.StreetName && c.City == model.StartLocation.City && c.ZipCode == model.StartLocation.ZipCode).SingleOrDefault();
@@ -145,11 +146,11 @@ namespace TripRadar.Controllers
                 
                
                 return View("ViewTrip", tripWeatherView);
-            //}
-            //catch
-            //{
-            //    return View();
-            //}
+            }
+            catch
+            {
+                return View();
+            }
         }
 
         // GET: Trip/Edit/5
@@ -352,10 +353,7 @@ namespace TripRadar.Controllers
 
         public async Task<int> GetVehicleKey(Vehicle vehicle)
         {
-            //Seeding for Test purposes
-            //vehicle.VehicleYear = 2012;
-            //vehicle.VehicleMake = "Honda";
-            //vehicle.VehicleModel = "Accord";
+            
             WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/vehicle/menu/options?year={vehicle.VehicleYear}&make={vehicle.VehicleMake}&model={vehicle.VehicleModel}");
             // WebResponse response = await request.GetResponseAsync();
             WebResponse response = await request.GetResponseAsync();
@@ -378,31 +376,54 @@ namespace TripRadar.Controllers
 
             //Getting JObject as vehicle from string json
             var parsedObject = JsonConvert.DeserializeObject<JObject>(jsonString);
-            var objectKey = parsedObject["menuItems"]["menuItem"][0]["value"];
-            vehicle.VehicleKey = Convert.ToInt32(objectKey);
-
+            try
+            {
+                var objectKey = parsedObject["menuItems"]["menuItem"][0]["value"];
+                vehicle.VehicleKey = Convert.ToInt32(objectKey);
+            }
+            catch
+            {
+                //For vehicle not found in the Fuel Economy database/or if user puts in wrong vehicle info
+                vehicle.VehicleKey = 0;
+            }
+            
             return vehicle.VehicleKey;
         }
 
         //helper method to get avgMPG
         public async Task<float> GetVehicleMpg(Vehicle vehicle)
         {
+            if(vehicle.VehicleKey != 0)
+            {
+                WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/ympg/shared/ympgVehicle/{vehicle.VehicleKey}");
+                WebResponse response = await request.GetResponseAsync();
 
-            WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/ympg/shared/ympgVehicle/{vehicle.VehicleKey}");
-            WebResponse response = await request.GetResponseAsync();
+                Stream stream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(stream);
+                string responseFromServer = reader.ReadToEnd();
 
-            Stream stream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(stream);
-            string responseFromServer = reader.ReadToEnd();
+                XmlDocument document = new XmlDocument();
+                document.LoadXml(responseFromServer);
+                string jsonString = JsonConvert.SerializeXmlNode(document);
 
-            XmlDocument document = new XmlDocument();
-            document.LoadXml(responseFromServer);
-            string jsonString = JsonConvert.SerializeXmlNode(document);
-
-            //Getting JObject as vehicle from string json
-            var parsedObject = JsonConvert.DeserializeObject<JObject>(jsonString);
-            var objectAvgMpg = parsedObject["yourMpgVehicle"]["avgMpg"].ToString();
-            vehicle.VehicleAvgMpg = float.Parse(objectAvgMpg);
+                //Getting JObject as vehicle from string json
+                var parsedObject = JsonConvert.DeserializeObject<JObject>(jsonString);
+                try
+                {
+                    var objectAvgMpg = parsedObject["yourMpgVehicle"]["avgMpg"].ToString();
+                    vehicle.VehicleAvgMpg = float.Parse(objectAvgMpg);
+                }
+                catch
+                {
+                    //hard coding for now if user vehicle is not found in FE database
+                    vehicle.VehicleAvgMpg = 16.55f;
+                }
+            }
+            else
+            {
+                //hard coding for now if user vehicle is not found in FE database
+                vehicle.VehicleAvgMpg = 16.55f;
+            }
             return vehicle.VehicleAvgMpg;
         }
 

@@ -85,9 +85,9 @@ namespace TripRadar.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(TripViewModel model)
         {
-            try
-            {
-                //Location location = new Location();
+            //try
+            //{
+            //    //Location location = new Location();
                 //location = model.StartLocation;
                 //db.Locations.Add(location);
                 Trip newTrip = new Trip();
@@ -145,11 +145,11 @@ namespace TripRadar.Controllers
                 
                
                 return View("ViewTrip", tripWeatherView);
-            }
-            catch
-            {
-                return View();
-            }
+            //}
+            //catch
+            //{
+            //    return View();
+            //}
         }
 
         // GET: Trip/Edit/5
@@ -421,8 +421,8 @@ namespace TripRadar.Controllers
             }
             else
             {
-                var userVehicle = db.Vehicles.SingleOrDefault(v => v.VehicleKey == vehicle.VehicleKey);
-                userVehicle.VehicleId = vehicle.VehicleId;
+                var userVehicle = db.Vehicles.SingleOrDefault(d => d.VehicleYear == vehicle.VehicleYear && d.VehicleModel == vehicle.VehicleModel && d.VehicleMake == vehicle.VehicleMake);
+                //userVehicle.VehicleId = vehicle.VehicleId;
                 db.SaveChanges();
                 return userVehicle;
             }
@@ -430,7 +430,7 @@ namespace TripRadar.Controllers
 
         public bool DoesVehicleExist(Vehicle vehicle)
         {
-            var vehicleFromDb = db.Vehicles.Where(d => d.VehicleId == vehicle.VehicleId).SingleOrDefault();
+            var vehicleFromDb = db.Vehicles.Where(d => d.VehicleYear == vehicle.VehicleYear && d.VehicleModel == vehicle.VehicleModel && d.VehicleMake == vehicle.VehicleMake).SingleOrDefault();
             if (vehicleFromDb == null)
                 return false;
             else

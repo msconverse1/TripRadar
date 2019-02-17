@@ -332,23 +332,10 @@ namespace TripRadar.Controllers
 
             // Sign in the user with this external login provider if the user already has a login
             var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+
             switch (result)
             {
                 case SignInStatus.Success:
-
-                    //var Currentuser = context.Users.Where(u => u.Email == loginInfo.Email).SingleOrDefault();
-
-                    //if (Currentuser == null)
-                    //{
-                    //    User newUser = new User();
-
-                    //    newUser.Name = loginInfo.ExternalIdentity.Name;
-                    //    newUser.ApplicationUserId = Currentuser.Id;
-
-
-                    //    context.User.Add(newUser);
-                    //    context.SaveChanges();
-                    //}
                    
                     return RedirectToLocal(returnUrl);
 

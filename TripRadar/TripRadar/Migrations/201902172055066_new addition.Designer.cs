@@ -7,13 +7,13 @@ namespace TripRadar.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class changetonewuser : IMigrationMetadata
+    public sealed partial class newaddition : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(changetonewuser));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(newaddition));
         
         string IMigrationMetadata.Id
         {
-            get { return "201902151753313_change to new user"; }
+            get { return "201902172055066_new addition"; }
         }
         
         string IMigrationMetadata.Source

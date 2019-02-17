@@ -1,4 +1,3 @@
-
 ﻿using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -30,10 +29,18 @@ namespace TripRadar.Controllers
             db = new ApplicationDbContext();
         }
         // GET: Trip
-        public ActionResult Index()
+        public ActionResult Index(bool? ViewArchived)
         {
-            var AllTrips = db.Trips.ToList();
 
+            
+            if(ViewArchived == true)
+            {
+                ViewBag.Archived = true;
+                var ViewTheseTrips = db.Trips.Where(t => t.IsArchived == true).ToList();
+                return View(ViewTheseTrips);
+            }
+
+            var AllTrips = db.Trips.Where(t => t.IsArchived == false).ToList();
             return View(AllTrips);
         }
 
@@ -49,6 +56,7 @@ namespace TripRadar.Controllers
             SeeMyTrip.WeatherID = await WeatherInfo(location);
             // db.SaveChanges();
             SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
+
             TripWeatherView tripWeatherView = new TripWeatherView()
             {
                 Trip = SeeMyTrip,
@@ -83,10 +91,13 @@ namespace TripRadar.Controllers
                 //db.Locations.Add(location);
                 Trip newTrip = new Trip();
 
+
                 Vehicle newVehicle = AddVehicle(model.User.Vehicle);
                 var user = GetUser();
                 newVehicle.VehicleKey = await GetVehicleKey(newVehicle);
                 newVehicle.VehicleAvgMpg = await GetVehicleMpg(newVehicle);
+
+
                 newTrip.WeatherID = await WeatherInfo(model.StartLocation);
                 var time = await GetDrivingDistance(model.StartLocation, model.EndLocation);
                 var locationFromDb = db.Locations.Where(c => c.StreetName == model.StartLocation.StreetName && c.City == model.StartLocation.City && c.ZipCode == model.StartLocation.ZipCode).SingleOrDefault();
@@ -117,17 +128,26 @@ namespace TripRadar.Controllers
                 newTrip.TripDistance = time[0];
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
-                CalMPG(newTrip,newVehicle);
+
+          var test=    await  CalMPG(newTrip,newVehicle);
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
                 user.TripID = newTrip.TripID;
                 user.Vehicle = newVehicle;
+
+                db.Trips.Add(newTrip);
+                db.SaveChanges();
+
+                user.TripID = newTrip.TripID;
+
                 TripWeatherView tripWeatherView = new TripWeatherView()
                 {
                     Trip = newTrip,
-                  Weather = newTrip.Weather
+                    Weather = newTrip.Weather
                 };
+                
+               
                 return View("ViewTrip", tripWeatherView);
             }
             catch
@@ -139,16 +159,33 @@ namespace TripRadar.Controllers
         // GET: Trip/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+
+            var tripInDb = db.Trips.SingleOrDefault(t => t.TripID == id);
+            if (tripInDb == null)
+            {
+                RedirectToAction("Create");
+            }
+            return View(tripInDb);
+
+       
+
         }
 
         // POST: Trip/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+
+        public ActionResult Edit(Trip trip, int id)
         {
+            var editThisTrip = db.Trips.Where(t => t.TripID == id).Single();
             try
             {
-                // TODO: Add update logic here
+                if(editThisTrip != null)
+                {
+                    editThisTrip.StartLocation = trip.StartLocation;
+                    editThisTrip.EndLocation = trip.EndLocation;
+                    editThisTrip.Name = trip.Name;
+                    db.SaveChanges();
+                }
 
                 return RedirectToAction("Index");
             }
@@ -190,26 +227,25 @@ namespace TripRadar.Controllers
 
         public ActionResult SendEmail(int id)
         {
-            var ShareThisTrip = db.Trips.Find(id);
-            //string url = Url.Action("ShareThisTrip", "Trip", new System.Web.Routing.RouteValueDictionary(new { id = id }), "https", Request.Url.Host);
-
-            return View(ShareThisTrip);
+            return View();
         }
 
+
         [HttpPost]
-        public ActionResult SendEmail(string receiver, string subject, string message, string URL, int id)
+        public ActionResult SendEmail(string receiver, string subject, int id)
         {
             string url = Url.Action("ShareThisTrip", "Trip", new System.Web.Routing.RouteValueDictionary(new { id = id }), "https", Request.Url.Host);
 
             try
             { 
+
                 if (ModelState.IsValid)
                 {
                     var senderEmail = new MailAddress("Nevin.Seibel.Test@gmail.com", "Trip Radar");
                     var receiverEmail = new MailAddress(receiver, "Receiver");
                     var password = "donthackme1";
-                    ////var sub = subject;
-                    ////var body = message;
+                    var body = "Check out my trip at: https://localhost:44386/trip/ViewTrip/" + id + "";
+
                     //var URL = db.Trips
                     var smtp = new SmtpClient()
                     {
@@ -223,7 +259,7 @@ namespace TripRadar.Controllers
                     using (var mess = new MailMessage(senderEmail, receiverEmail))
                     {
                         mess.Subject = subject;
-                        mess.Body = "Check out my trip " + url + "";
+                        mess.Body = body;
                         mess.IsBodyHtml = true;
                         smtp.Send(mess);
                     }
@@ -239,6 +275,7 @@ namespace TripRadar.Controllers
             return RedirectToAction("Index");
             
         }
+
         //Get Weather based on Location call
         public async Task<int> WeatherInfo(Location location)
         {
@@ -290,7 +327,6 @@ namespace TripRadar.Controllers
                 db.SaveChanges();
                 return weather.WeatherId;
 
-
             }
 
         }
@@ -318,9 +354,11 @@ namespace TripRadar.Controllers
             
         }
 
-        public async void CalMPG(Trip trip,Vehicle vehicle)
+        public async Task<double[]> CalMPG(Trip trip,Vehicle vehicle)
         {
-           
+            var TotalMilesICanDrive = vehicle.VehicleAvgMpg * 12;
+            var NotifyForGas = (.1 * TotalMilesICanDrive);
+            var MileToFillAt = TotalMilesICanDrive - NotifyForGas;
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("https://maps.googleapis.com");
@@ -329,7 +367,7 @@ namespace TripRadar.Controllers
 
                 var stringResult = await response.Content.ReadAsStringAsync();
                 var json = JObject.Parse(stringResult);
-                string[] currentMiles;
+                double totalmiles =0;
 
                 
                 var stepscount = json["routes"][0]["legs"][0]["steps"].Count();
@@ -339,24 +377,33 @@ namespace TripRadar.Controllers
                     string[] stringSeparators = new string[] { " " };
                     var result = toconvert.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
                     var miles = Convert.ToDouble(result[0]);
-                    if (result[1] == "feet")
+                    if (result[1] == "ft")
                     {
-
+                       var fttomiles = (Convert.ToDouble(result[0]) / 5280);
+                        totalmiles += fttomiles;
                     }
-
+                    else if (result[1] == "mi")
+                    {
+                        totalmiles += Convert.ToDouble(result[0]);
+                    }
+                    if (totalmiles >= MileToFillAt)
+                    {
+                        double[] coords = new double[2];
+                        coords[0] = json["routes"][0]["legs"][0]["steps"][i]["start_location"]["lat"].ToObject<double>();
+                        coords[1] = json["routes"][0]["legs"][0]["steps"][i]["start_location"]["lng"].ToObject<double>();
+                        return coords;
+                    }
                 }
 
+                return null;
 
 
-                var TotalMilesICanDrive = vehicle.VehicleAvgMpg * 12;
-            var NotifyForGas = .1 * TotalMilesICanDrive;
             }
         }
 
         public async Task<int> GetVehicleKey(Vehicle vehicle)
         {
-            //Seeding for Test purposes	
-
+            
             WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/vehicle/menu/options?year={vehicle.VehicleYear}&make={vehicle.VehicleMake}&model={vehicle.VehicleModel}");
             // WebResponse response = await request.GetResponseAsync();	
             WebResponse response = await request.GetResponseAsync();
@@ -379,31 +426,58 @@ namespace TripRadar.Controllers
 
             //Getting JObject as vehicle from string json	
             var parsedObject = JsonConvert.DeserializeObject<JObject>(jsonString);
-            var objectKey = parsedObject["menuItems"]["menuItem"][0]["value"];
-            vehicle.VehicleKey = Convert.ToInt32(objectKey);
-
+            try
+            {
+                var objectKey = parsedObject["menuItems"]["menuItem"][0]["value"];
+                vehicle.VehicleKey = Convert.ToInt32(objectKey);
+            }
+            catch
+            {
+                //For vehicle not found in the Fuel Economy database/or if user puts in wrong vehicle info
+                vehicle.VehicleKey = 0;
+            }
+            
             return vehicle.VehicleKey;
         }
 
         //helper method to get avgMPG	
         public async Task<float> GetVehicleMpg(Vehicle vehicle)
         {
+            if(vehicle.VehicleKey != 0)
+            {
+                WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/ympg/shared/ympgVehicle/{vehicle.VehicleKey}");
+                WebResponse response = await request.GetResponseAsync();
 
-            WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/ympg/shared/ympgVehicle/{vehicle.VehicleKey}");
-            WebResponse response = await request.GetResponseAsync();
+                Stream stream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(stream);
+                string responseFromServer = reader.ReadToEnd();
 
-            Stream stream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(stream);
-            string responseFromServer = reader.ReadToEnd();
+                XmlDocument document = new XmlDocument();
+                document.LoadXml(responseFromServer);
+                string jsonString = JsonConvert.SerializeXmlNode(document);
 
-            XmlDocument document = new XmlDocument();
-            document.LoadXml(responseFromServer);
-            string jsonString = JsonConvert.SerializeXmlNode(document);
 
             //Getting JObject as vehicle from string json	
-            var parsedObject = JsonConvert.DeserializeObject<JObject>(jsonString);
-            var objectAvgMpg = parsedObject["yourMpgVehicle"]["avgMpg"].ToString();
-            vehicle.VehicleAvgMpg = float.Parse(objectAvgMpg);
+            
+
+                //Getting JObject as vehicle from string json
+                var parsedObject = JsonConvert.DeserializeObject<JObject>(jsonString);
+                try
+                {
+                    var objectAvgMpg = parsedObject["yourMpgVehicle"]["avgMpg"].ToString();
+                    vehicle.VehicleAvgMpg = float.Parse(objectAvgMpg);
+                }
+                catch
+                {
+                    //hard coding for now if user vehicle is not found in FE database
+                    vehicle.VehicleAvgMpg = 16.55f;
+                }
+            }
+            else
+            {
+                //hard coding for now if user vehicle is not found in FE database
+                vehicle.VehicleAvgMpg = 16.55f;
+            };
             return vehicle.VehicleAvgMpg;
         }
         public Vehicle AddVehicle(Vehicle vehicle)
@@ -421,8 +495,8 @@ namespace TripRadar.Controllers
             }
             else
             {
-                var userVehicle = db.Vehicles.SingleOrDefault(v => v.VehicleKey == vehicle.VehicleKey);
-                userVehicle.VehicleId = vehicle.VehicleId;
+                var userVehicle = db.Vehicles.SingleOrDefault(d => d.VehicleYear == vehicle.VehicleYear && d.VehicleModel == vehicle.VehicleModel && d.VehicleMake == vehicle.VehicleMake);
+                //userVehicle.VehicleId = vehicle.VehicleId;
                 db.SaveChanges();
                 return userVehicle;
             }
@@ -430,7 +504,7 @@ namespace TripRadar.Controllers
 
         public bool DoesVehicleExist(Vehicle vehicle)
         {
-            var vehicleFromDb = db.Vehicles.Where(d => d.VehicleId == vehicle.VehicleId).SingleOrDefault();
+            var vehicleFromDb = db.Vehicles.Where(d => d.VehicleYear == vehicle.VehicleYear && d.VehicleModel == vehicle.VehicleModel && d.VehicleMake == vehicle.VehicleMake).SingleOrDefault();
             if (vehicleFromDb == null)
                 return false;
             else
@@ -443,6 +517,45 @@ namespace TripRadar.Controllers
             var user = db.User.SingleOrDefault(u => u.ApplicationUserId == userLoggedIn);
             return user;
         }
+
+        //Get
+        public ActionResult Archive(int id)
+        {
+            Trip ArchiveThisTrip = db.Trips.Find(id);
+            return View(ArchiveThisTrip);
+        }
+
+        [HttpPost]
+        public ActionResult Archive(int id, Trip trip)
+        {
+            var ArchiveThisTrip = db.Trips.Find(id);
+            if (ArchiveThisTrip != null)
+            {
+                ArchiveThisTrip.IsArchived = true;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult UnArchive(int id)
+        {
+            Trip UnarchiveThisTrip = db.Trips.Find(id);
+            if(UnarchiveThisTrip != null)
+            {
+                UnarchiveThisTrip.IsArchived = false;
+                db.SaveChanges();
+                
+            }
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Places(int id)
+        {
+            var trip = db.Trips.SingleOrDefault(v => v.TripID == id);
+            return View(trip);
+        }
+
     }
 }
-       

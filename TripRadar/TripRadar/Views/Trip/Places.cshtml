@@ -1,0 +1,21 @@
+﻿@model TripRadar.Models.Trip
+
+@{
+    ViewBag.Title = "Places";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Gas Stations Near You</h2>
+
+<div>
+<iframe height="800" width="800" 
+        frameborder="0"
+        style="border:0"
+        src="https://www.google.com/maps/embed/v1/search?key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA&q=gas+stations+near+@Model.StartLocation">
+    @*Will Replace the start location with user current location in the request*@
+</iframe>
+</div>
+<p>
+    @*@Html.ActionLink("Edit", "Edit", new { id = Model.RecommendedPlace }) |
+    @Html.ActionLink("Back to List", "Index")*@
+</p>

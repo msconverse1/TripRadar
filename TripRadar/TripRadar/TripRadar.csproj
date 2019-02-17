@@ -212,9 +212,10 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Migrations\201902151753313_change to new user.cs" />
-    <Compile Include="Migrations\201902151753313_change to new user.Designer.cs">
-      <DependentUpon>201902151753313_change to new user.cs</DependentUpon>
+    <Compile Include="Migrations\201902172054382_Pull date 2\17\2019.cs" />
+    <Compile Include="Migrations\201902172055066_new addition.cs" />
+    <Compile Include="Migrations\201902172055066_new addition.Designer.cs">
+      <DependentUpon>201902172055066_new addition.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Email.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -251,10 +252,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="credentials.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="ClassDiagram1.cd" />
+    <Content Include="credentials.json" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -308,6 +307,8 @@
     <Content Include="Views\Trip\SendEmail.cshtml" />
     <Content Include="Views\Trip\View.cshtml" />
     <Content Include="Views\Trip\Edit.cshtml" />
+    <Content Include="Views\Trip\Archive.cshtml" />
+    <Content Include="Views\Trip\Places.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -326,8 +327,8 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902151753313_change to new user.resx">
-      <DependentUpon>201902151753313_change to new user.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902172055066_new addition.resx">
+      <DependentUpon>201902172055066_new addition.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

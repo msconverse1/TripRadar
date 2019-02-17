@@ -7,13 +7,13 @@ namespace TripRadar.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class newaddition : IMigrationMetadata
+    public sealed partial class weatherbugfix : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(newaddition));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(weatherbugfix));
         
         string IMigrationMetadata.Id
         {
-            get { return "201902172055066_new addition"; }
+            get { return "201902172240576_weather bug fix"; }
         }
         
         string IMigrationMetadata.Source

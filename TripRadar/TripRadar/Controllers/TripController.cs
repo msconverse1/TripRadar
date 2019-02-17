@@ -4,16 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
-
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using System.Net.Http;
 using System.Threading.Tasks;
-
 using System.Web;
 using System.Web.Mvc;
-
 using TripRadar.Models;
 using System.IO;
 using System.Xml;
@@ -48,23 +44,72 @@ namespace TripRadar.Controllers
         public async Task<ActionResult> ViewTrip(int id)
         {
             var SeeMyTrip = db.Trips.Where(t => t.TripID == id).SingleOrDefault();
-            
-            var toUpdate = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
+            var SeeMyTripWeather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             var location = db.Locations.Where(l => l.StreetName + " " + l.City + " " + l.State + " " + l.ZipCode == SeeMyTrip.StartLocation).FirstOrDefault();
+
 
            
             SeeMyTrip.WeatherID = await WeatherInfo(location);
             // db.SaveChanges();
             SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
 
-            TripWeatherView tripWeatherView = new TripWeatherView()
-            {
-                Trip = SeeMyTrip,
-                Weather = SeeMyTrip.Weather
-            };
-            return View(tripWeatherView);
-        }
+            TripWeatherView tripWeatherView = new TripWeatherView();
 
+
+            // Will return a Weather ID based on a api call (newest weather)
+            var CurrentWeatherReport = await WeatherInfo(location);
+
+            // if the weather api returns a weather object that already exists then carry on displaying that informaiton through the viewmod
+            if (CurrentWeatherReport == SeeMyTrip.WeatherID)
+            {
+                TripWeatherView tripWeatherView1 = new TripWeatherView() {
+                    Trip = SeeMyTrip,
+                Weather = SeeMyTripWeather
+            };
+                return View(tripWeatherView1);
+            }
+
+
+            
+            // if the weather api creates a new weather object then we need to set out trip's weather id to that new entrys id
+            // and view the trip through the viewMod
+            else
+            {
+                var WeatherBeforeUpdating = db.Weathers.Where(w => w.WeatherId == CurrentWeatherReport).SingleOrDefault();
+
+                // Compare temps to get a difference,
+                var PreTempToken = WeatherBeforeUpdating.MainTemp - SeeMyTripWeather.MainTemp;
+                var TempToken = Math.Abs(PreTempToken);
+                // Compare Wind to get difference
+                var PreWindToken = WeatherBeforeUpdating.Speedvalue - SeeMyTripWeather.Speedvalue;
+                var WindToken = Math.Abs(PreWindToken);
+                
+                // Logic of comparisons: Threshold for wind and temp is >10 
+                if (TempToken > 10 || WindToken > 10)
+                {
+                    SeeMyTrip.HasBigChangeWeather = true;
+                    // get users email address to send weather update.
+                    var _user = User.Identity.GetUserId();
+                    var CurrentUser = db.Users.Where(u => u.Id == _user).SingleOrDefault();
+                    var CurrentUserEmail = CurrentUser.Email;
+                    // Send the email
+                    SendEmail(CurrentUserEmail, "Weather Update", SeeMyTrip.TripID);
+                    // reset email auto-generate-email trigger
+                    SeeMyTrip.HasBigChangeWeather = false;
+                }
+
+                SeeMyTrip.WeatherID = CurrentWeatherReport; // this is the update **
+                db.SaveChanges();
+
+                TripWeatherView tripWeatherView2 = new TripWeatherView();
+                tripWeatherView2.Trip = SeeMyTrip;
+                tripWeatherView2.Weather = SeeMyTripWeather;
+                return View(tripWeatherView);
+            }
+
+
+         
+        }
 
         [HttpPost]
         public ActionResult ViewTrip()
@@ -129,7 +174,7 @@ namespace TripRadar.Controllers
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
 
-          var test=    await  CalMPG(newTrip,newVehicle);
+            CalMPG(newTrip,newVehicle);
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
@@ -227,6 +272,7 @@ namespace TripRadar.Controllers
 
         public ActionResult SendEmail(int id)
         {
+
             return View();
         }
 
@@ -235,6 +281,7 @@ namespace TripRadar.Controllers
         public ActionResult SendEmail(string receiver, string subject, int id)
         {
             string url = Url.Action("ShareThisTrip", "Trip", new System.Web.Routing.RouteValueDictionary(new { id = id }), "https", Request.Url.Host);
+            var TripEmailIsAbout = db.Trips.Find(id);
 
             try
             { 
@@ -244,7 +291,24 @@ namespace TripRadar.Controllers
                     var senderEmail = new MailAddress("Nevin.Seibel.Test@gmail.com", "Trip Radar");
                     var receiverEmail = new MailAddress(receiver, "Receiver");
                     var password = "donthackme1";
-                    var body = "Check out my trip at: https://localhost:44386/trip/ViewTrip/" + id + "";
+                    string body;
+
+
+                    // logic for auto-generated-email body. Should alert user of changes in weather (current threshhold is now at 10 for wind and temp)
+                    if(TripEmailIsAbout.HasBigChangeWeather == true)
+                    {
+                         body = "Warning! " +
+                            " We have tracked some dirastic changes in wind speeds and tempature " +
+                            " for certain areas included in your trip. For more information please " +
+                            " refer to your trips details at the following link. " +
+                            " https://localhost:44386/trip/ViewTrip/" + id + "";
+
+                    }
+                    else
+                    {
+                        body = "Check out my trip at: https://localhost:44386/trip/ViewTrip/" + id + "";
+                    }
+                    
 
                     //var URL = db.Trips
                     var smtp = new SmtpClient()
@@ -302,7 +366,7 @@ namespace TripRadar.Controllers
                 var j_windspeed = json["wind"]["speed"];
                 var j_windDirection = json["wind"]["deg"];
                 var WeatherDesc = j_weatherDesc.ToObject<string>();
-                var Humidity = j_humidity.ToObject<float>();
+                var _Humidity = j_humidity.ToObject<float>();
                 var CloudCover = j_cloudcover.ToObject<float>();
                 var datetimeUnix = j_datetimeUinx.ToObject<double>();
                 var Tempature = j_tempature.ToObject<float>();
@@ -313,18 +377,39 @@ namespace TripRadar.Controllers
                 dateTime = dateTime.AddSeconds(datetimeUnix);
                 TimeZoneInfo timeZone = TimeZoneInfo.Local;
                 dateTime = TimeZoneInfo.ConvertTimeFromUtc(dateTime, timeZone);
+
+
                 Weather weather = new Weather()
                 {
                     MainTemp = Tempature,
                     Speedvalue = WindSpeed,
                     CloudValue = CloudCover,
                     WindDeg = WindDegs,
-                    Humidity = Humidity,
+                    Humidity = _Humidity,
                     TypeOfSkys = WeatherDesc,
                     DateTime = dateTime
                 };
-                db.Weathers.Add(weather);
-                db.SaveChanges();
+                // Checking to see if weather values exist in table before adding a new entry to weather table.
+                // omitted the datetime attribute, under assumption that datetime will be differnt - relative.
+                // attempt to narrow that chances of a duplicate entry into the weather table. 
+                // effort necessary for the sending of an email based on weather conditions chaning S
+                var CheckForDuplicateWeather = db.Weathers.Where(w => Math.Floor(w.MainTemp) == Math.Floor(Tempature)  && Math.Floor(w.Speedvalue) == Math.Floor(WindSpeed) &&
+                Math.Floor(w.CloudValue) == Math.Floor(CloudCover) && Math.Floor(w.WindDeg) == Math.Floor(WindDegs) && Math.Floor(w.Humidity) == Math.Floor(_Humidity) && w.TypeOfSkys == WeatherDesc && w.DateTime == dateTime).SingleOrDefault();
+               
+                // If nothing already exists then add it into the table. 
+                if (CheckForDuplicateWeather == null)
+                {
+                    db.Weathers.Add(weather);
+                    db.SaveChanges();
+                }
+
+                // Set the Just pulled weather ID to the id of the entry that already exists in the table
+                else
+                {
+                    weather.WeatherId = CheckForDuplicateWeather.WeatherId;
+                    db.SaveChanges();
+                }
+                
                 return weather.WeatherId;
 
             }
@@ -354,7 +439,7 @@ namespace TripRadar.Controllers
             
         }
 
-        public async Task<double[]> CalMPG(Trip trip,Vehicle vehicle)
+        public async void CalMPG(Trip trip,Vehicle vehicle)
         {
             var TotalMilesICanDrive = vehicle.VehicleAvgMpg * 12;
             var NotifyForGas = (.1 * TotalMilesICanDrive);
@@ -391,13 +476,18 @@ namespace TripRadar.Controllers
                         double[] coords = new double[2];
                         coords[0] = json["routes"][0]["legs"][0]["steps"][i]["start_location"]["lat"].ToObject<double>();
                         coords[1] = json["routes"][0]["legs"][0]["steps"][i]["start_location"]["lng"].ToObject<double>();
-                        return coords;
+                        //Logic to drop a pin at this  location to display das station near by
+
+
+                        //reset this call and total miles till next stop
+                        i -= 1;
+                        totalmiles = 0;
+                        //Maybe check weather for this location??
+
+                       //
+
                     }
                 }
-
-                return null;
-
-
             }
         }
 

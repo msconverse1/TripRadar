@@ -212,10 +212,9 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Migrations\201902172054382_Pull date 2\17\2019.cs" />
-    <Compile Include="Migrations\201902172055066_new addition.cs" />
-    <Compile Include="Migrations\201902172055066_new addition.Designer.cs">
-      <DependentUpon>201902172055066_new addition.cs</DependentUpon>
+    <Compile Include="Migrations\201902172240576_weather bug fix.cs" />
+    <Compile Include="Migrations\201902172240576_weather bug fix.Designer.cs">
+      <DependentUpon>201902172240576_weather bug fix.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Email.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -327,8 +326,8 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902172055066_new addition.resx">
-      <DependentUpon>201902172055066_new addition.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902172240576_weather bug fix.resx">
+      <DependentUpon>201902172240576_weather bug fix.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

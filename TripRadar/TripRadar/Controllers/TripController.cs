@@ -498,6 +498,11 @@ namespace TripRadar.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult Places(int id)
+        {
+            var trip = db.Trips.SingleOrDefault(v => v.TripID == id);
+            return View(trip);
+        }
 
     }
 }

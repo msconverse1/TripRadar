@@ -303,6 +303,7 @@
     <Content Include="Views\Trip\View.cshtml" />
     <Content Include="Views\Trip\Edit.cshtml" />
     <Content Include="Views\Trip\Archive.cshtml" />
+    <Content Include="Views\Trip\Places.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

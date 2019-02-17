@@ -31,5 +31,6 @@ namespace TripRadar.Models
         public Weather Weather { get; set; }
 
         public bool IsArchived { get; set; }
+        public bool HasBigChangeWeather { get; set; }
     }
 }

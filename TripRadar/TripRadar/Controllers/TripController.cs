@@ -25,9 +25,9 @@ namespace TripRadar.Controllers
             db = new ApplicationDbContext();
         }
         // GET: Trip
-        public ActionResult Index(bool? ViewArchived, string area)
+        public ActionResult Index(bool? ViewArchived, string FromWhere)
         {
-            if(area == "FromHome")
+            if(FromWhere == "FromHome")
             {
                 if (GetUser() == null)
                 {

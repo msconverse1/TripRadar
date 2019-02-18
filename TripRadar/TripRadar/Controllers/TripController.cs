@@ -25,9 +25,16 @@ namespace TripRadar.Controllers
             db = new ApplicationDbContext();
         }
         // GET: Trip
-        public ActionResult Index(bool? ViewArchived)
+        public ActionResult Index(bool? ViewArchived, string area)
         {
-
+            if(area == "FromHome")
+            {
+                if (GetUser() == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+ 
+            }
             
             if(ViewArchived == true)
             {
@@ -43,6 +50,8 @@ namespace TripRadar.Controllers
         // GET: Trip/ViewTrip/5
         public async Task<ActionResult> ViewTrip(int id)
         {
+
+            
             var SeeMyTrip = db.Trips.Where(t => t.TripID == id).SingleOrDefault();
             var SeeMyTripWeather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             var location = db.Locations.Where(l => l.StreetName + " " + l.City + " " + l.State + " " + l.ZipCode == SeeMyTrip.StartLocation).FirstOrDefault();

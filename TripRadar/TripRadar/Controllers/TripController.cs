@@ -173,8 +173,8 @@ namespace TripRadar.Controllers
                 newTrip.TripDistance = time[0];
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
-
-          await  CalMPG(newTrip,newVehicle);
+                List<PinLocations> pinLocations;
+                pinLocations = await  CalMPG(newTrip,newVehicle);
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
@@ -426,8 +426,9 @@ namespace TripRadar.Controllers
             
         }
 
-        public async Task CalMPG(Trip trip,Vehicle vehicle)
+        public async Task<List<PinLocations>> CalMPG(Trip trip,Vehicle vehicle)
         {
+            List<PinLocations> pinLocations = new List<PinLocations>();
             var TotalMilesICanDrive = vehicle.VehicleAvgMpg * 12;
             var NotifyForGas = (.1 * TotalMilesICanDrive);
             var MileToFillAt = TotalMilesICanDrive - NotifyForGas;
@@ -461,12 +462,15 @@ namespace TripRadar.Controllers
                     }
                     if (totalmiles >= MileToFillAt)
                     {
-                        double[] coords = new double[2];
-                        coords[0] = json["routes"][0]["legs"][0]["steps"][i]["start_location"]["lat"].ToObject<double>();
-                        coords[1] = json["routes"][0]["legs"][0]["steps"][i]["start_location"]["lng"].ToObject<double>();
+
                         //Logic to drop a pin at this  location to display das station near by
+                        PinLocations latlong = new PinLocations()
+                        {
+                            Lat = json["routes"][0]["legs"][0]["steps"][i]["start_location"]["lat"].ToObject<double>(),
+                            Lng = json["routes"][0]["legs"][0]["steps"][i]["start_location"]["lng"].ToObject<double>()
 
-
+                        };
+                        pinLocations.Add(latlong);
                         //reset this call and total miles till next stop
                         if (json["routes"][0]["legs"][0]["steps"][i+1]["start_location"] != null)
                         {
@@ -480,6 +484,7 @@ namespace TripRadar.Controllers
                         
                     }
                 }
+                return pinLocations;
             }
         }
 

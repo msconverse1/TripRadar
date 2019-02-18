@@ -104,7 +104,7 @@ namespace TripRadar.Controllers
                 TripWeatherView tripWeatherView2 = new TripWeatherView();
                 tripWeatherView2.Trip = SeeMyTrip;
                 tripWeatherView2.Weather = SeeMyTripWeather;
-                return View(tripWeatherView);
+                return View(tripWeatherView2);
             }
 
 

@@ -174,7 +174,7 @@ namespace TripRadar.Controllers
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
 
-            CalMPG(newTrip,newVehicle);
+           // CalMPG(newTrip,newVehicle);
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
@@ -484,8 +484,8 @@ namespace TripRadar.Controllers
                         totalmiles = 0;
                         //Maybe check weather for this location??
 
-                       //
-
+                        //
+                        break;
                     }
                 }
             }

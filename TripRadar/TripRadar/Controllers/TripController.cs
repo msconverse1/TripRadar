@@ -49,9 +49,9 @@ namespace TripRadar.Controllers
 
 
            
-            SeeMyTrip.WeatherID = await WeatherInfo(location);
-            // db.SaveChanges();
-            SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
+            //SeeMyTrip.WeatherID = await WeatherInfo(location);
+            //// db.SaveChanges();
+            //SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
 
             TripWeatherView tripWeatherView = new TripWeatherView();
 
@@ -64,7 +64,7 @@ namespace TripRadar.Controllers
             {
                 TripWeatherView tripWeatherView1 = new TripWeatherView() {
                     Trip = SeeMyTrip,
-                Weather = SeeMyTripWeather
+                    Weather = SeeMyTripWeather
             };
                 return View(tripWeatherView1);
             }
@@ -178,12 +178,10 @@ namespace TripRadar.Controllers
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
-                user.TripID = newTrip.TripID;
+
+                //user.TripID = newTrip.TripID;
                 user.Vehicle = newVehicle;
-
-               
-
-                user.TripID = newTrip.TripID;
+                //user.TripID = newTrip.TripID;
 
                 TripWeatherView tripWeatherView = new TripWeatherView()
                 {
@@ -253,19 +251,20 @@ namespace TripRadar.Controllers
         public ActionResult Delete(int id, Trip thisItem)
         {
             var DeleteThisTrip = db.Trips.Where(t => t.TripID == id).Single();
-            try
-            {
+            //try
+            //{
                 if (DeleteThisTrip != null)
                 {
                     db.Trips.Remove(DeleteThisTrip);
+                    //db.Weathers.Remove(DeleteThisTrip.Weather);
                     db.SaveChanges();
                 }
                 return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            //}
+            //catch
+            //{
+            //    return View();
+            //}
         }
 
 

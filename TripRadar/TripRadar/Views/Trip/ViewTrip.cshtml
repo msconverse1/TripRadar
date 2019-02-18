@@ -5,7 +5,12 @@
 }
 
 <h2>ViewTrip</h2>
-
+<style>
+    #map {
+        height: 600px;
+        width: 800px;
+    }
+</style>
 <div>
     <h4>Trip</h4>
     <hr />
@@ -73,23 +78,21 @@
             </dd>
         </dl>
     </div>
+
     <div class="col-md-8">
         <iframe width="800" height="600" frameborder="0" style="border:0"
-                src="https://www.google.com/maps/embed/v1/directions?origin=@Model.Trip.StartLocation&destination=@Model.Trip.EndLocation&key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA"></iframe>
+                src="https://www.google.com/maps/embed/v1/directions?origin=@Model.Trip.StartLocation&destination=@Model.Trip.EndLocation&key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA" allowfullscreen></iframe>
     </div>
-
-
 </div>
 
 <div class="col-md-12">
-
     <p>
         @Html.ActionLink("Edit", "Edit", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
         @Html.ActionLink("View All Trips", "Index", " ", new { @class = "btn btn-primary" })
         @Html.ActionLink("Share", "SendEmail", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
         @Html.ActionLink("Archive", "Archive", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
         @Html.ActionLink("Places", "Places", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Watch Weather", "WatchWeather", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
     </p>
 
 </div>
-

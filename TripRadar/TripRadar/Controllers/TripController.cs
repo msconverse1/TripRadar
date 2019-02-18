@@ -647,5 +647,9 @@ namespace TripRadar.Controllers
             return View(trip);
         }
 
+        public ActionResult WatchWeather()
+        {
+            return View();
+        }
     }
 }

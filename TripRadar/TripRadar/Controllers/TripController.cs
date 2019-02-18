@@ -313,6 +313,7 @@ namespace TripRadar.Controllers
                         mess.Body = body;
                         mess.IsBodyHtml = true;
                         smtp.Send(mess);
+                        
                     }
                 }
                 

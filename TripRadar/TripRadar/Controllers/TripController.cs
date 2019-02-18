@@ -298,7 +298,7 @@ namespace TripRadar.Controllers
                     if(TripEmailIsAbout.HasBigChangeWeather == true)
                     {
                          body = "Warning! " +
-                            " We have tracked some dirastic changes in wind speeds and tempature " +
+                            " We have tracked some drastic changes in wind speeds and temperature " +
                             " for certain areas included in your trip. For more information please " +
                             " refer to your trips details at the following link. " +
                             " https://localhost:44386/trip/ViewTrip/" + id + "";

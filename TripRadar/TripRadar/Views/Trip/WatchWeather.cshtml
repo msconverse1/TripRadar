@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "WatchWeather";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -26,16 +25,13 @@
         width: 100%
     }
 </style>
-
 @*JavaScript CODE*@
 <script>
-
-
     function initialize() {
         var home = new google.maps.LatLng(42.9731754827335, -87.8675017507062);
         var geocoder = new google.maps.Geocoder();
         var infowindow = new google.maps.InfoWindow();
-
+        
         var mapOptions = {
             zoom: 10,
             center: home
@@ -45,7 +41,7 @@
 
         //addMarker(home, map);
         //marker.setMap(map)
-
+        addMarker(@Model.StartLocation, map)
         google.maps.event.addListener(map, 'click', function (event) {
 
             addMarker(event.latLng, map);

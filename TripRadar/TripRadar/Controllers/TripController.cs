@@ -181,8 +181,7 @@ namespace TripRadar.Controllers
                 user.TripID = newTrip.TripID;
                 user.Vehicle = newVehicle;
 
-                db.Trips.Add(newTrip);
-                db.SaveChanges();
+               
 
                 user.TripID = newTrip.TripID;
 

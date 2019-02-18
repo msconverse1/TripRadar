@@ -55,7 +55,7 @@ namespace TripRadar.Controllers
             var SeeMyTrip = db.Trips.Where(t => t.TripID == id).SingleOrDefault();
             var SeeMyTripWeather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             var location = db.Locations.Where(l => l.StreetName + " " + l.City + " " + l.State + " " + l.ZipCode == SeeMyTrip.StartLocation).FirstOrDefault();
-
+           // SeeMyTrip.Weather = SeeMyTripWeather;
 
            
             //SeeMyTrip.WeatherID = await WeatherInfo(location);
@@ -71,7 +71,9 @@ namespace TripRadar.Controllers
             // if the weather api returns a weather object that already exists then carry on displaying that informaiton through the viewmod
             if (CurrentWeatherReport == SeeMyTrip.WeatherID)
             {
+                SeeMyTripWeather.DateTime = DateTime.Now;
                 TripWeatherView tripWeatherView1 = new TripWeatherView() {
+                    
                     Trip = SeeMyTrip,
                     Weather = SeeMyTripWeather
             };
@@ -387,7 +389,7 @@ namespace TripRadar.Controllers
                     WindDeg = WindDegs,
                     Humidity = _Humidity,
                     TypeOfSkys = WeatherDesc,
-                    DateTime = dateTime
+                    DateTime = DateTime.Now
                 };
                 // Checking to see if weather values exist in table before adding a new entry to weather table.
                 // omitted the datetime attribute, under assumption that datetime will be differnt - relative.

@@ -133,9 +133,7 @@ namespace TripRadar.Controllers
         {
             try
             {
-                //Location location = new Location();
-                //location = model.StartLocation;
-                //db.Locations.Add(location);
+                
                 Trip newTrip = new Trip();
 
 
@@ -163,6 +161,7 @@ namespace TripRadar.Controllers
                 {
                     newTrip.EndLocation = endLocationFromDb.AddressString;
                 }
+
                 else
                 {
                     db.Locations.Add(model.EndLocation);
@@ -170,29 +169,30 @@ namespace TripRadar.Controllers
                     newTrip.EndLocation = model.EndLocation.AddressString;
                 }
               
-              
                 newTrip.TripTime = time[1];
                 newTrip.TripDistance = time[0];
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
+
+
+                await  CalMPG(newTrip,newVehicle);
+
                 List<PinLocations> pinLocations;
                 pinLocations = await  CalMPG(newTrip,newVehicle);
 
+
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
-
-                //user.TripID = newTrip.TripID;
+                
                 user.Vehicle = newVehicle;
-                //user.TripID = newTrip.TripID;
 
                 TripWeatherView tripWeatherView = new TripWeatherView()
                 {
                     Trip = newTrip,
                     Weather = newTrip.Weather
                 };
-                
-               
                 return View("ViewTrip", tripWeatherView);
+
             }
             catch
             {

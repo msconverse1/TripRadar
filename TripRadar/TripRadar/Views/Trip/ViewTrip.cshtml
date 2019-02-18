@@ -84,6 +84,7 @@
                 src="https://www.google.com/maps/embed/v1/directions?origin=@Model.Trip.StartLocation&destination=@Model.Trip.EndLocation&key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA" allowfullscreen></iframe>
     </div>
 </div>
+
 <div class="col-md-12">
     <p>
         @Html.ActionLink("Edit", "Edit", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
@@ -93,4 +94,5 @@
         @Html.ActionLink("Places", "Places", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
         @Html.ActionLink("Watch Weather", "WatchWeather", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
     </p>
+
 </div>

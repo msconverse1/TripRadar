@@ -181,8 +181,7 @@ namespace TripRadar.Controllers
                 user.TripID = newTrip.TripID;
                 user.Vehicle = newVehicle;
 
-                db.Trips.Add(newTrip);
-                db.SaveChanges();
+               
 
                 user.TripID = newTrip.TripID;
 
@@ -326,6 +325,7 @@ namespace TripRadar.Controllers
                         mess.Body = body;
                         mess.IsBodyHtml = true;
                         smtp.Send(mess);
+                        
                     }
                 }
                 

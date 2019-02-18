@@ -20,10 +20,10 @@ namespace TripRadar.Models
         public int? VehicleId { get; set; }
         public Vehicle Vehicle { get; set; }
 
-        [ForeignKey("Trip")]
-        [Display(Name = "TripID")]
-        public int? TripID { get; set; }
-        public Trip Trip { get; set; }
+        //[ForeignKey("Trip")]
+        //[Display(Name = "TripID")]
+        //public int? TripID { get; set; }
+        //public Trip Trip { get; set; }
 
 
         [ForeignKey("ApplicationUser")]

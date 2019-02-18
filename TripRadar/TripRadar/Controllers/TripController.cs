@@ -174,7 +174,7 @@ namespace TripRadar.Controllers
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
 
-           // CalMPG(newTrip,newVehicle);
+          await  CalMPG(newTrip,newVehicle);
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
@@ -339,22 +339,15 @@ namespace TripRadar.Controllers
             return RedirectToAction("Index");
             
         }
-
         //Get Weather based on Location call
         public async Task<int> WeatherInfo(Location location)
         {
             string weatherAPI = "4a219d24ec4bd8504123161859504e32";
-            // User driver = db.User.Where(u => u.UserId == id).FirstOrDefault();
-            //  var zipcode= driver.Trip.Location.ZipCode;
-            ////   string urlforzipcode = $"http://api.openweathermap.org/data/2.5/forecast?zip={53202}" +
-            // $"&mode=json&units=metric&APPID={weatherAPI}";
             using (var client = new HttpClient())
             {
-
                 client.BaseAddress = new Uri("http://api.openweathermap.org");
                 var response = await client.GetAsync($"/data/2.5/weather?zip={location.ZipCode}&appid={weatherAPI}&units=metric");
                 response.EnsureSuccessStatusCode();
-
 
                 var stringResult = await response.Content.ReadAsStringAsync();
                 var json = JObject.Parse(stringResult);
@@ -378,7 +371,6 @@ namespace TripRadar.Controllers
                 TimeZoneInfo timeZone = TimeZoneInfo.Local;
                 dateTime = TimeZoneInfo.ConvertTimeFromUtc(dateTime, timeZone);
 
-
                 Weather weather = new Weather()
                 {
                     MainTemp = Tempature,
@@ -394,26 +386,21 @@ namespace TripRadar.Controllers
                 // attempt to narrow that chances of a duplicate entry into the weather table. 
                 // effort necessary for the sending of an email based on weather conditions chaning S
                 var CheckForDuplicateWeather = db.Weathers.Where(w => Math.Floor(w.MainTemp) == Math.Floor(Tempature)  && Math.Floor(w.Speedvalue) == Math.Floor(WindSpeed) &&
-                Math.Floor(w.CloudValue) == Math.Floor(CloudCover) && Math.Floor(w.WindDeg) == Math.Floor(WindDegs) && Math.Floor(w.Humidity) == Math.Floor(_Humidity) && w.TypeOfSkys == WeatherDesc && w.DateTime == dateTime).SingleOrDefault();
-               
+                Math.Floor(w.CloudValue) == Math.Floor(CloudCover) && Math.Floor(w.WindDeg) == Math.Floor(WindDegs) && Math.Floor(w.Humidity) == Math.Floor(_Humidity) && w.TypeOfSkys == WeatherDesc && w.DateTime == dateTime).SingleOrDefault(); 
                 // If nothing already exists then add it into the table. 
                 if (CheckForDuplicateWeather == null)
                 {
                     db.Weathers.Add(weather);
                     db.SaveChanges();
                 }
-
                 // Set the Just pulled weather ID to the id of the entry that already exists in the table
                 else
                 {
                     weather.WeatherId = CheckForDuplicateWeather.WeatherId;
                     db.SaveChanges();
                 }
-                
                 return weather.WeatherId;
-
             }
-
         }
         public async Task<string[]> GetDrivingDistance(Location origin, Location destination)
         {
@@ -439,7 +426,7 @@ namespace TripRadar.Controllers
             
         }
 
-        public async void CalMPG(Trip trip,Vehicle vehicle)
+        public async Task CalMPG(Trip trip,Vehicle vehicle)
         {
             var TotalMilesICanDrive = vehicle.VehicleAvgMpg * 12;
             var NotifyForGas = (.1 * TotalMilesICanDrive);
@@ -464,12 +451,13 @@ namespace TripRadar.Controllers
                     var miles = Convert.ToDouble(result[0]);
                     if (result[1] == "ft")
                     {
-                       var fttomiles = (Convert.ToDouble(result[0]) / 5280);
-                        totalmiles += fttomiles;
+                        miles = (Convert.ToDouble(miles) / 5280);
+                        totalmiles += miles;
                     }
                     else if (result[1] == "mi")
                     {
-                        totalmiles += Convert.ToDouble(result[0]);
+                        miles = Convert.ToDouble(miles);
+                        totalmiles += miles;
                     }
                     if (totalmiles >= MileToFillAt)
                     {
@@ -480,12 +468,16 @@ namespace TripRadar.Controllers
 
 
                         //reset this call and total miles till next stop
-                        i -= 1;
-                        totalmiles = 0;
+                        if (json["routes"][0]["legs"][0]["steps"][i+1]["start_location"] != null)
+                        {
+                            
+                            totalmiles = miles;
+                        }
+                       
                         //Maybe check weather for this location??
 
                         //
-                        break;
+                        
                     }
                 }
             }

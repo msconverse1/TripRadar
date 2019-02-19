@@ -23,8 +23,8 @@ namespace TripRadar
                       "~/Scripts/bootstrap.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap_spacelab.css",
-                      "~/Content/site.css"));
+                      "~/Content/Bootstrap_spacelab.css",
+                      "~/Content/Site.css"));
         }
     }
 }

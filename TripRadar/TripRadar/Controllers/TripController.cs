@@ -13,9 +13,11 @@ using System.Web.Mvc;
 using TripRadar.Models;
 using System.IO;
 using System.Xml;
+using System.Web.Services;
 
 namespace TripRadar.Controllers
-{
+{ 
+
     public class TripController : Controller
     {
         ApplicationDbContext db;
@@ -340,8 +342,10 @@ namespace TripRadar.Controllers
             return RedirectToAction("Index");
             
         }
+
+
         //Get Weather based on Location call
-        public async Task<int> WeatherInfo(Location location)
+        public   async Task<int> WeatherInfo(Location location)
         {
             string weatherAPI = "4a219d24ec4bd8504123161859504e32";
             using (var client = new HttpClient())
@@ -646,6 +650,10 @@ namespace TripRadar.Controllers
         }
 
         public ActionResult WatchWeather()
+        {
+            return View();
+        }
+        public ActionResult GoogleWeather()
         {
             return View();
         }

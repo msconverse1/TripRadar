@@ -14,5 +14,7 @@ namespace TripRadar.Models
         public Location EndLocation { get; set; }
 
         public User User { get; set; }
+
+        public int ProjectedZip { get; set; }
     }
 }

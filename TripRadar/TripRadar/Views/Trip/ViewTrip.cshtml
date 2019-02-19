@@ -91,7 +91,7 @@
         @Html.ActionLink("View All Trips", "Index", " ", new { @class = "btn btn-primary" })
         @Html.ActionLink("Share", "SendEmail", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
         @Html.ActionLink("Archive", "Archive", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
-        @Html.ActionLink("Places", "Places", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Recommended Stops", "Places", new { zip = 0, id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
         @Html.ActionLink("Watch Weather", "WatchWeather", new { id = Model.Trip.TripID }, new { @class = "btn btn-primary" })
     </p>
 

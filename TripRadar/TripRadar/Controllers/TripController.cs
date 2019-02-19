@@ -16,7 +16,7 @@ using System.Xml;
 using System.Web.Services;
 
 namespace TripRadar.Controllers
-{ 
+{
 
     public class TripController : Controller
     {
@@ -30,8 +30,8 @@ namespace TripRadar.Controllers
         public ActionResult Index(bool? ViewArchived)
         {
 
-            
-            if(ViewArchived == true)
+
+            if (ViewArchived == true)
             {
                 ViewBag.Archived = true;
                 var ViewTheseTrips = db.Trips.Where(t => t.IsArchived == true).ToList();
@@ -48,9 +48,9 @@ namespace TripRadar.Controllers
             var SeeMyTrip = db.Trips.Where(t => t.TripID == id).SingleOrDefault();
             var SeeMyTripWeather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             var location = db.Locations.Where(l => l.StreetName + " " + l.City + " " + l.State + " " + l.ZipCode == SeeMyTrip.StartLocation).FirstOrDefault();
-           // SeeMyTrip.Weather = SeeMyTripWeather;
+            // SeeMyTrip.Weather = SeeMyTripWeather;
 
-           
+
             //SeeMyTrip.WeatherID = await WeatherInfo(location);
             //// db.SaveChanges();
             //SeeMyTrip.Weather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
@@ -66,15 +66,15 @@ namespace TripRadar.Controllers
             {
                 SeeMyTripWeather.DateTime = DateTime.Now;
                 TripWeatherView tripWeatherView1 = new TripWeatherView() {
-                    
+
                     Trip = SeeMyTrip,
                     Weather = SeeMyTripWeather
-            };
+                };
                 return View(tripWeatherView1);
             }
 
 
-            
+
             // if the weather api creates a new weather object then we need to set out trip's weather id to that new entrys id
             // and view the trip through the viewMod
             else
@@ -87,7 +87,7 @@ namespace TripRadar.Controllers
                 // Compare Wind to get difference
                 var PreWindToken = WeatherBeforeUpdating.Speedvalue - SeeMyTripWeather.Speedvalue;
                 var WindToken = Math.Abs(PreWindToken);
-                
+
                 // Logic of comparisons: Threshold for wind and temp is >10 
                 if (TempToken > 10 || WindToken > 10)
                 {
@@ -112,7 +112,7 @@ namespace TripRadar.Controllers
             }
 
 
-         
+
         }
 
         [HttpPost]
@@ -135,7 +135,7 @@ namespace TripRadar.Controllers
         {
             try
             {
-                
+
                 Trip newTrip = new Trip();
 
 
@@ -170,22 +170,22 @@ namespace TripRadar.Controllers
                     db.SaveChanges();
                     newTrip.EndLocation = model.EndLocation.AddressString;
                 }
-              
+
                 newTrip.TripTime = time[1];
                 newTrip.TripDistance = time[0];
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
 
 
-                await  CalMPG(newTrip,newVehicle);
+                await CalMPG(newTrip, newVehicle);
 
                 List<PinLocations> pinLocations;
-                pinLocations = await  CalMPG(newTrip,newVehicle);
+                pinLocations = await CalMPG(newTrip, newVehicle);
 
 
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
-                
+
                 user.Vehicle = newVehicle;
 
                 TripWeatherView tripWeatherView = new TripWeatherView()
@@ -213,7 +213,7 @@ namespace TripRadar.Controllers
             }
             return View(tripInDb);
 
-       
+
 
         }
 
@@ -225,7 +225,7 @@ namespace TripRadar.Controllers
             var editThisTrip = db.Trips.Where(t => t.TripID == id).Single();
             try
             {
-                if(editThisTrip != null)
+                if (editThisTrip != null)
                 {
                     editThisTrip.StartLocation = trip.StartLocation;
                     editThisTrip.EndLocation = trip.EndLocation;
@@ -257,13 +257,13 @@ namespace TripRadar.Controllers
             var DeleteThisTrip = db.Trips.Where(t => t.TripID == id).Single();
             //try
             //{
-                if (DeleteThisTrip != null)
-                {
-                    db.Trips.Remove(DeleteThisTrip);
-                    //db.Weathers.Remove(DeleteThisTrip.Weather);
-                    db.SaveChanges();
-                }
-                return RedirectToAction("Index");
+            if (DeleteThisTrip != null)
+            {
+                db.Trips.Remove(DeleteThisTrip);
+                //db.Weathers.Remove(DeleteThisTrip.Weather);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Index");
             //}
             //catch
             //{
@@ -286,7 +286,7 @@ namespace TripRadar.Controllers
             var TripEmailIsAbout = db.Trips.Find(id);
 
             try
-            { 
+            {
 
                 if (ModelState.IsValid)
                 {
@@ -297,20 +297,20 @@ namespace TripRadar.Controllers
 
 
                     // logic for auto-generated-email body. Should alert user of changes in weather (current threshhold is now at 10 for wind and temp)
-                    if(TripEmailIsAbout.HasBigChangeWeather == true)
+                    if (TripEmailIsAbout.HasBigChangeWeather == true)
                     {
-                         body = "Warning! " +
-                            " We have tracked some dirastic changes in wind speeds and tempature " +
-                            " for certain areas included in your trip. For more information please " +
-                            " refer to your trips details at the following link. " +
-                            " https://localhost:44386/trip/ViewTrip/" + id + "";
+                        body = "Warning! " +
+                           " We have tracked some dirastic changes in wind speeds and tempature " +
+                           " for certain areas included in your trip. For more information please " +
+                           " refer to your trips details at the following link. " +
+                           " https://localhost:44386/trip/ViewTrip/" + id + "";
 
                     }
                     else
                     {
                         body = "Check out my trip at: https://localhost:44386/trip/ViewTrip/" + id + "";
                     }
-                    
+
 
                     //var URL = db.Trips
                     var smtp = new SmtpClient()
@@ -328,10 +328,10 @@ namespace TripRadar.Controllers
                         mess.Body = body;
                         mess.IsBodyHtml = true;
                         smtp.Send(mess);
-                        
+
                     }
                 }
-                
+
             }
 
             catch (Exception)
@@ -340,12 +340,12 @@ namespace TripRadar.Controllers
             }
 
             return RedirectToAction("Index");
-            
+
         }
 
 
         //Get Weather based on Location call
-        public   async Task<int> WeatherInfo(Location location)
+        public async Task<int> WeatherInfo(Location location)
         {
             string weatherAPI = "4a219d24ec4bd8504123161859504e32";
             using (var client = new HttpClient())
@@ -390,8 +390,8 @@ namespace TripRadar.Controllers
                 // omitted the datetime attribute, under assumption that datetime will be differnt - relative.
                 // attempt to narrow that chances of a duplicate entry into the weather table. 
                 // effort necessary for the sending of an email based on weather conditions chaning S
-                var CheckForDuplicateWeather = db.Weathers.Where(w => Math.Floor(w.MainTemp) == Math.Floor(Tempature)  && Math.Floor(w.Speedvalue) == Math.Floor(WindSpeed) &&
-                Math.Floor(w.CloudValue) == Math.Floor(CloudCover) && Math.Floor(w.WindDeg) == Math.Floor(WindDegs) && Math.Floor(w.Humidity) == Math.Floor(_Humidity) && w.TypeOfSkys == WeatherDesc && w.DateTime == dateTime).SingleOrDefault(); 
+                var CheckForDuplicateWeather = db.Weathers.Where(w => Math.Floor(w.MainTemp) == Math.Floor(Tempature) && Math.Floor(w.Speedvalue) == Math.Floor(WindSpeed) &&
+                Math.Floor(w.CloudValue) == Math.Floor(CloudCover) && Math.Floor(w.WindDeg) == Math.Floor(WindDegs) && Math.Floor(w.Humidity) == Math.Floor(_Humidity) && w.TypeOfSkys == WeatherDesc && w.DateTime == dateTime).SingleOrDefault();
                 // If nothing already exists then add it into the table. 
                 if (CheckForDuplicateWeather == null)
                 {
@@ -409,7 +409,7 @@ namespace TripRadar.Controllers
         }
         public async Task<string[]> GetDrivingDistance(Location origin, Location destination)
         {
-            var Origin = origin.StreetName+" " + origin.City+" " + origin.State+" " + origin.ZipCode;
+            var Origin = origin.StreetName + " " + origin.City + " " + origin.State + " " + origin.ZipCode;
             var Destination = destination.StreetName + " " + destination.City + " " + destination.State + " " + destination.ZipCode;
             using (var client = new HttpClient())
             {
@@ -419,19 +419,19 @@ namespace TripRadar.Controllers
 
                 var stringResult = await response.Content.ReadAsStringAsync();
                 var json = JObject.Parse(stringResult);
-                 var j_tripDistance = json["rows"][0]["elements"][0]["distance"]["text"];
-                 var j_tripTime = json["rows"][0]["elements"][0]["duration"]["text"];
+                var j_tripDistance = json["rows"][0]["elements"][0]["distance"]["text"];
+                var j_tripTime = json["rows"][0]["elements"][0]["duration"]["text"];
                 var tripDistance = j_tripDistance.ToObject<string>();
                 var tripTime = j_tripTime.ToObject<string>();
                 string[] concatDistanceTime = new string[2];
                 concatDistanceTime[0] = tripDistance;
                 concatDistanceTime[1] = tripTime;
-                    return concatDistanceTime;
+                return concatDistanceTime;
             }
-            
+
         }
 
-        public async Task<List<PinLocations>> CalMPG(Trip trip,Vehicle vehicle)
+        public async Task<List<PinLocations>> CalMPG(Trip trip, Vehicle vehicle)
         {
             List<PinLocations> pinLocations = new List<PinLocations>();
             var TotalMilesICanDrive = vehicle.VehicleAvgMpg * 12;
@@ -445,9 +445,9 @@ namespace TripRadar.Controllers
 
                 var stringResult = await response.Content.ReadAsStringAsync();
                 var json = JObject.Parse(stringResult);
-                double totalmiles =0;
+                double totalmiles = 0;
 
-                
+
                 var stepscount = json["routes"][0]["legs"][0]["steps"].Count();
                 for (int i = 0; i < stepscount; i++)
                 {
@@ -477,16 +477,16 @@ namespace TripRadar.Controllers
                         };
                         pinLocations.Add(latlong);
                         //reset this call and total miles till next stop
-                        if (json["routes"][0]["legs"][0]["steps"][i+1]["start_location"] != null)
+                        if (json["routes"][0]["legs"][0]["steps"][i + 1]["start_location"] != null)
                         {
-                            
+
                             totalmiles = miles;
                         }
-                       
+
                         //Maybe check weather for this location??
 
                         //
-                        
+
                     }
                 }
                 return pinLocations;
@@ -495,7 +495,7 @@ namespace TripRadar.Controllers
 
         public async Task<int> GetVehicleKey(Vehicle vehicle)
         {
-            
+
             WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/vehicle/menu/options?year={vehicle.VehicleYear}&make={vehicle.VehicleMake}&model={vehicle.VehicleModel}");
             // WebResponse response = await request.GetResponseAsync();	
             WebResponse response = await request.GetResponseAsync();
@@ -528,14 +528,14 @@ namespace TripRadar.Controllers
                 //For vehicle not found in the Fuel Economy database/or if user puts in wrong vehicle info
                 vehicle.VehicleKey = 0;
             }
-            
+
             return vehicle.VehicleKey;
         }
 
         //helper method to get avgMPG	
         public async Task<float> GetVehicleMpg(Vehicle vehicle)
         {
-            if(vehicle.VehicleKey != 0)
+            if (vehicle.VehicleKey != 0)
             {
                 WebRequest request = WebRequest.Create($"https://www.fueleconomy.gov/ws/rest/ympg/shared/ympgVehicle/{vehicle.VehicleKey}");
                 WebResponse response = await request.GetResponseAsync();
@@ -549,8 +549,8 @@ namespace TripRadar.Controllers
                 string jsonString = JsonConvert.SerializeXmlNode(document);
 
 
-            //Getting JObject as vehicle from string json	
-            
+                //Getting JObject as vehicle from string json	
+
 
                 //Getting JObject as vehicle from string json
                 var parsedObject = JsonConvert.DeserializeObject<JObject>(jsonString);
@@ -627,18 +627,18 @@ namespace TripRadar.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            
+
             return RedirectToAction("Index");
         }
 
         public ActionResult UnArchive(int id)
         {
             Trip UnarchiveThisTrip = db.Trips.Find(id);
-            if(UnarchiveThisTrip != null)
+            if (UnarchiveThisTrip != null)
             {
                 UnarchiveThisTrip.IsArchived = false;
                 db.SaveChanges();
-                
+
             }
             return RedirectToAction("Index");
         }

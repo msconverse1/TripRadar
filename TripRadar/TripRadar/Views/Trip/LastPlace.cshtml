@@ -1,0 +1,18 @@
+﻿@model TripRadar.Models.TripViewModel
+@{
+    ViewBag.Title = "Places";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Recommended Stops</h2>
+<h3>Gas Stations</h3>
+<h4><i>No More Recommended Stops</i></h4>
+<div>
+
+    <iframe height="800"
+            width="800"
+            frameborder="0"
+            src="https://www.google.com/maps/embed/v1/search?key=AIzaSyClqIXEuixfPAVE6ZoxSCO7zOFtX2rCpwA&q=gas_stations+near+@Model.ProjectedZip&zoom=14"></iframe>
+</div>
+<p>
+    @Html.ActionLink("Back Home", "Index", new { @class = "btn btn-primary" })
+</p>

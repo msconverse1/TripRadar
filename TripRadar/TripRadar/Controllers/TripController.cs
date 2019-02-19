@@ -13,9 +13,11 @@ using System.Web.Mvc;
 using TripRadar.Models;
 using System.IO;
 using System.Xml;
+using System.Web.Services;
 
 namespace TripRadar.Controllers
 {
+
 
 	public class TripController : Controller
 	{
@@ -180,9 +182,6 @@ namespace TripRadar.Controllers
 				newTrip.TripDistance = time[0];
 				newTrip.Name = model.Trip.Name;
 				newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
-
-
-				await CalMPG(newTrip, newVehicle);
 
 				List<PinLocations> pinLocations;
 				pinLocations = await CalMPG(newTrip, newVehicle);
@@ -739,5 +738,4 @@ namespace TripRadar.Controllers
 		}
 	}
 }
-
-	
+  

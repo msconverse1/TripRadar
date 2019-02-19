@@ -16,7 +16,9 @@
 
 </script>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
+</asp:ScriptManager>
 @*CSS CODE*@
 <style>
 
@@ -27,7 +29,10 @@
 </style>
 @*JavaScript CODE*@
 <script>
-    function initialize() {
+
+
+   async function initialize() {
+
         var home = new google.maps.LatLng(42.9731754827335, -87.8675017507062);
         var geocoder = new google.maps.Geocoder();
         var infowindow = new google.maps.InfoWindow();
@@ -45,11 +50,13 @@
 
             addMarker(event.latLng, map);
             marker = new google.maps.Marker({
-            position: event.latLng,
-            map: map,
-            draggable: true
-        });
+                position: event.latLng,
+                map: map,
+                draggable: true
+            });
+
         
+
 
             geocoder.geocode({ 'latLng': event.latLng }, function (results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
@@ -60,10 +67,14 @@
                         $('#longitude').val(marker.getPosition().lng());
                         infowindow.setContent(results[0].formatted_address);
                         infowindow.open(map, marker);
+                        GetData(parseInt(results[0]["address_components"][7]["long_name"])).then(dataObj => alert(ReturnString(dataObj)));
+                       
+                       
+                      
                     }
                 }
             });
-            
+
             google.maps.event.addListener(marker, 'dragend', function () {
 
                 geocoder.geocode({ 'latLng': marker.getPosition() }, function (results, status) {
@@ -74,18 +85,22 @@
                             $('#longitude').val(marker.getPosition().lng());
                             infowindow.setContent(results[0].formatted_address);
                             infowindow.open(map, marker);
+                            
+                             GetData(parseInt(results[0]["address_components"][7]["long_name"])).then(dataObj =>alert(ReturnString(dataObj)));
+                            
+                           
+                            PageMethods.JWeatherInfo(results[0].formatted_address);
                         }
                     }
                 });
             });
         });
-
     }
 
     function addMarker(location, map) {
         // Add the marker at the clicked location, and add the next-available label
         // from the array of alphabetical characters.
-       marker = new google.maps.Marker({
+        marker = new google.maps.Marker({
             position: location,
             map: map,
             draggable: true
@@ -93,6 +108,29 @@
         marker.setMap(map);
 
     }
+    async function GetData(zip) {
+        let response = await fetch("https://api.openweathermap.org/data/2.5/weather?zip="+zip+"&appid=4a219d24ec4bd8504123161859504e32&units=metric");
+        let data = await response.json()
+        let tempature = data["main"]["temp"];
+        let description = data["weather"][0]["description"];
+        let humidity = data["main"]["humidity"];
+        let wind = data["wind"]["speed"];
+        let dataObj = {
+            tempature: tempature,
+            description: description,
+            humidity: humidity,
+            wind: wind
 
+        }
+        return dataObj;
+
+    }
+    function ReturnString(dataObj) {
+        let display = "Tempature in C: " + dataObj.tempature + "\nHumidity: " + dataObj.humidity + "\nWind: " + dataObj.wind + "\nDescription: " + dataObj.description;
+        return display;
+    }
+ 
     google.maps.event.addDomListener(window, 'load', initialize);
 </script>
+
+

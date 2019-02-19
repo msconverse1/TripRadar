@@ -1,31 +1,237 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        /* Create two equal columns that floats next to each other */
+        .column {
+            float: left;
+            width: 50%;
+            padding: 10px;
+            height: 300px; /* Should be removed. Only for demonstration */
+        }
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+        .responsive {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<br />
+<br />
+<br />
+<div class="container">
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#myCarousel" data-slide-to="1"></li>
+            <li data-target="#myCarousel" data-slide-to="2"></li>
+        </ol>
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner">
+            <div class="item active">
+                <img class="d-block w-50" src="~/Content/Image/Team.jpg" alt="Hero 1">
+            </div>
+            <div class="item">
+                <img class="d-block w-50" src="~/Content/Image/Insperation.jpg" alt="Hero 1">
+            </div>
+            <div class="item">
+                <img class="d-block w-50" src="~/Content/Image/Team.jpg" alt="Hero 1">
+            </div>
+        </div>
+        <!-- Left and right controls -->
+        <a class="left carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
 </div>
+<br />
+<br />
+<br />
+<div class="container">
+    <center>
+        <h2>Our Inspiration</h2>
+    </center>
+    <p>
+        <h3><i>The Problem</i></h3>
+        <font size="4">
+            Odds are you have taken a road trip.
+            <br />
+            There is even a better chance that you did some planning before you hit the road.
+            <br />
+            Planning the route, stops, snacks, jams, and preparing for the weather can be a hassle.
+            <br />
+            Although road trips can be awesome, planning isn’t all that great. It's duanting when you have to use multiple apps to plan a trip.
+        </font>
+    </p>
+    <br />
+    <p>
+        <h3><i>The Solution</i></h3>
+        <font size="4">
+            After thinking about it we thought it would be awesome to have one application that could handle all of the road-trip planning stages.
+            <br />
+            One application to the mighty road-tripper the best/fastest route.
+            <br />
+            One application to give us the weather for different locations along the way.
+            <br />
+            One application to tell us when we would need to refuel.
+        </font>
+    </p>
+    <br />
+    <p>
+        <h3><i>The Applicaiton</i></h3>
+        <font size="4">
+            Que -  Trip Radar
+            <br />
+            Trip Radar is a single web-based application that is a one stop shop for road-trip planning.
+            <br />
+            It is a single application for creating, planning, and managing your road trips.
+            <br />
+            All of your routes, weather, and stops all in one spot.
+        </font>
+    </p>
+</div>
+<br />
+<br />
+<br />
+<div class="container">
+    <center>
+        <h2>Meet The Team</h2>
+    </center>
+    <div class="row">
+        <div class="column {float: left; width: 50%; padding: 10px; height: 300px;}" style="background-color:#edf0f7">
+            <center>
+                <h4>
+                    Matthew Nelson
+                </h4>
+                <p>
+                    With no prior experience Matthew came to devCodeCamp with the goal of gaining the
+                    skills necessary to become a professional software developer. He hit the ground
+                    running and is now working on A-teams, like the one who brought you Trip Radar.
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+                    Find out more about Matthew with the following links:
+
+                    <br />
+                    <div class="list-group-flush">
+                        <a href="https://www.linkedin.com/in/matthew-nelson-616212176">
+                            <img src="~/Content/Image/Linkedin_logo.png" width="30" height="30" title="MatthewNelsonsLinkedIn/">
+                        </a>
+
+                        <a href="https://github.com/mnelson251">
+                            <img src="~/Content/Image/GitHub-Mark.png" width="30" height="30" title="MatthewNelsons_github/">
+                        </a>
+                    </div>
+                </p>
+            </center>
+        </div>
+        <div class="column {float: left; width: 50%; padding: 10px; height: 300px;}" style="background-color:#F9EBEA">
+            <center>
+                <h4>
+                    KanWar Rupuyal
+                </h4>
+                <p>
+                    Kanwar is a natural problem solver. He joined devCodeCamp to strengthen his prowess
+                    in the development of enterprise level software applications.
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    Find out more about Kenwar with the following links:
+                    <br />
+                    <div class="list-group-flush">
+                        <a href="https://www.linkedin.com/in/kanwarjit-s-rupyal-18023546">
+                            <img src="~/Content/Image/Linkedin_logo.png" width="30" height="30" title="Kanwar_LinkedIn">
+                        </a>
+                        <a href="https://github.com/rupyal23">
+                            <img src="~/Content/Image/GitHub-Mark.png" width="30" height="30" title="Kanwar_github">
+                        </a>
+                    </div>
+                </p>
+            </center>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    <div class="row">
+        <div class="column {float: left; width: 50%; padding: 10px; height: 300px;}" style="background-color:#F9EBEA">
+            <center>
+                <h4>
+                    Matt Converse
+                </h4>
+                <p>
+                    With a solid background in game development, Matthew joined devCodeCamp with the goal of
+                    sharpening his skill set to the point where no challenge was to difficult.
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    Find more about Matthew with the following links:
+
+                    <br />
+                    <div class="list-group-flush">
+                        <a href="https://www.linkedin.com/in/matthewconverse">
+                            <img src="~/Content/Image/Linkedin_logo.png" width="30" height="30" title="MatthewC_LinedIn/">
+                        </a>
+                        <a href="https://github.com/msconverse1">
+                            <img src="~/Content/Image/GitHub-Mark.png" width="30" height="30" title="MatthewC_Git/">
+                        </a>
+                    </div>
+                </p>
+            </center>
+        </div>
+        <div class="column {float: left; width: 50%; padding: 10px; height: 300px;}" style="background-color:#edf0f7">
+            <center>
+                <h4>
+                    Victor Rono
+                </h4>
+                <p>
+                    Not having a background in software development wasn’t even part of the calculus for Victor.
+                    He knew that he wanted to change the world, and he plans on doing so by building the
+                    solutions that will make the lives of others easier.
+                    <br />
+
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    Find more about Victor with the following links:
+
+                    <br />
+                    <div class="list-group-flush">
+                        <a href="https://www.linkedin.com/in/victor-rono-10174914b">
+                            <img src="~/Content/Image/Linkedin_logo.png" width="30" height="30" title="Victors_LinkedIn/">
+                        </a>
+                        <a href="https://github.com/VicRono">
+                            <img src="~/Content/Image/GitHub-Mark.png" width="30" height="30" title="Victors_github">
+                        </a>
+                    </div>
+                </p>
+            </center>
+        </div>
     </div>
 </div>

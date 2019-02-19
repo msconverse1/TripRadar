@@ -9,5 +9,6 @@ namespace TripRadar.Models
     {
         public Trip Trip { get; set; }
         public Weather Weather {get;set;}
+
     }
 }

@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<TripRadar.Models.PinLocations>
 @{
     ViewBag.Title = "WatchWeather";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -19,41 +19,36 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 @*CSS CODE*@
 <style>
-    /* Always set the map height explicitly to define the size of the div
-    * element that contains the map. */
+
     #map {
         height: 500px;
         width: 100%
     }
 </style>
-
 @*JavaScript CODE*@
 <script>
-
-
     function initialize() {
         var home = new google.maps.LatLng(42.9731754827335, -87.8675017507062);
         var geocoder = new google.maps.Geocoder();
         var infowindow = new google.maps.InfoWindow();
-
+        var content;
         var mapOptions = {
             zoom: 10,
             center: home
         };
         var marker;
         var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        addMarker(home, map);
 
-        //addMarker(home, map);
         //marker.setMap(map)
-
         google.maps.event.addListener(map, 'click', function (event) {
 
             addMarker(event.latLng, map);
             marker = new google.maps.Marker({
-                position: event.latLng,
-                map: map,
-                draggable: true
-            });
+            position: event.latLng,
+            map: map,
+            draggable: true
+        });
         
 
             geocoder.geocode({ 'latLng': event.latLng }, function (results, status) {

@@ -25,9 +25,16 @@ namespace TripRadar.Controllers
             db = new ApplicationDbContext();
         }
         // GET: Trip
-        public ActionResult Index(bool? ViewArchived)
+        public ActionResult Index(bool? ViewArchived, string FromWhere)
         {
-
+            if(FromWhere == "FromHome")
+            {
+                if (GetUser() == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+ 
+            }
             
             if(ViewArchived == true)
             {
@@ -43,10 +50,12 @@ namespace TripRadar.Controllers
         // GET: Trip/ViewTrip/5
         public async Task<ActionResult> ViewTrip(int id)
         {
+
+            
             var SeeMyTrip = db.Trips.Where(t => t.TripID == id).SingleOrDefault();
             var SeeMyTripWeather = db.Weathers.Where(w => w.WeatherId == SeeMyTrip.WeatherID).FirstOrDefault();
             var location = db.Locations.Where(l => l.StreetName + " " + l.City + " " + l.State + " " + l.ZipCode == SeeMyTrip.StartLocation).FirstOrDefault();
-
+           // SeeMyTrip.Weather = SeeMyTripWeather;
 
            
             //SeeMyTrip.WeatherID = await WeatherInfo(location);
@@ -62,7 +71,9 @@ namespace TripRadar.Controllers
             // if the weather api returns a weather object that already exists then carry on displaying that informaiton through the viewmod
             if (CurrentWeatherReport == SeeMyTrip.WeatherID)
             {
+                SeeMyTripWeather.DateTime = DateTime.Now;
                 TripWeatherView tripWeatherView1 = new TripWeatherView() {
+                    
                     Trip = SeeMyTrip,
                     Weather = SeeMyTripWeather
             };
@@ -104,7 +115,7 @@ namespace TripRadar.Controllers
                 TripWeatherView tripWeatherView2 = new TripWeatherView();
                 tripWeatherView2.Trip = SeeMyTrip;
                 tripWeatherView2.Weather = SeeMyTripWeather;
-                return View(tripWeatherView);
+                return View(tripWeatherView2);
             }
 
 
@@ -131,9 +142,7 @@ namespace TripRadar.Controllers
         {
             try
             {
-                //Location location = new Location();
-                //location = model.StartLocation;
-                //db.Locations.Add(location);
+                
                 Trip newTrip = new Trip();
 
 
@@ -161,6 +170,7 @@ namespace TripRadar.Controllers
                 {
                     newTrip.EndLocation = endLocationFromDb.AddressString;
                 }
+
                 else
                 {
                     db.Locations.Add(model.EndLocation);
@@ -168,29 +178,30 @@ namespace TripRadar.Controllers
                     newTrip.EndLocation = model.EndLocation.AddressString;
                 }
               
-              
                 newTrip.TripTime = time[1];
                 newTrip.TripDistance = time[0];
                 newTrip.Name = model.Trip.Name;
                 newTrip.Weather = db.Weathers.Where(w => w.WeatherId == newTrip.WeatherID).FirstOrDefault();
+
+
+                await  CalMPG(newTrip,newVehicle);
+
                 List<PinLocations> pinLocations;
                 pinLocations = await  CalMPG(newTrip,newVehicle);
 
+
                 db.Trips.Add(newTrip);
                 db.SaveChanges();
-
-                //user.TripID = newTrip.TripID;
+                
                 user.Vehicle = newVehicle;
-                //user.TripID = newTrip.TripID;
 
                 TripWeatherView tripWeatherView = new TripWeatherView()
                 {
                     Trip = newTrip,
                     Weather = newTrip.Weather
                 };
-                
-               
                 return View("ViewTrip", tripWeatherView);
+
             }
             catch
             {
@@ -378,7 +389,7 @@ namespace TripRadar.Controllers
                     WindDeg = WindDegs,
                     Humidity = _Humidity,
                     TypeOfSkys = WeatherDesc,
-                    DateTime = dateTime
+                    DateTime = DateTime.Now
                 };
                 // Checking to see if weather values exist in table before adding a new entry to weather table.
                 // omitted the datetime attribute, under assumption that datetime will be differnt - relative.

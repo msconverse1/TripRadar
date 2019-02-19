@@ -66,9 +66,10 @@
                         $('#longitude').val(marker.getPosition().lng());
                         infowindow.setContent(results[0].formatted_address);
                         infowindow.open(map, marker);
-                        GetData(parseInt(results[0]["address_components"][7]["long_name"])).then(data => console.log(data));
-                        
-                     
+                        GetData(parseInt(results[0]["address_components"][7]["long_name"])).then(dataObj => alert(ReturnString(dataObj)));
+                       
+                       
+                      
                     }
                 }
             });
@@ -84,8 +85,9 @@
                             infowindow.setContent(results[0].formatted_address);
                             infowindow.open(map, marker);
                             
-                            GetData(parseInt(results[0]["address_components"][7]["long_name"])).then(data => console.log(data));
+                             GetData(parseInt(results[0]["address_components"][7]["long_name"])).then(dataObj =>alert(ReturnString(dataObj)));
                             
+                           
                             PageMethods.JWeatherInfo(results[0].formatted_address);
                         }
                     }
@@ -109,8 +111,22 @@
         let response = await fetch("https://api.openweathermap.org/data/2.5/weather?zip="+zip+"&appid=4a219d24ec4bd8504123161859504e32&units=metric");
         let data = await response.json()
         let tempature = data["main"]["temp"];
-        return data;
+        let description = data["weather"][0]["description"];
+        let humidity = data["main"]["humidity"];
+        let wind = data["wind"]["speed"];
+        let dataObj = {
+            tempature: tempature,
+            description: description,
+            humidity: humidity,
+            wind: wind
 
+        }
+        return dataObj;
+
+    }
+    function ReturnString(dataObj) {
+        let display = "Tempature in C: " + dataObj.tempature + "\nHumidity: " + dataObj.humidity + "\nWind: " + dataObj.wind + "\nDescription: " + dataObj.description;
+        return display;
     }
  
     google.maps.event.addDomListener(window, 'load', initialize);

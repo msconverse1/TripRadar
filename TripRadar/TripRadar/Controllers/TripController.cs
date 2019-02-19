@@ -187,11 +187,12 @@ namespace TripRadar.Controllers
 				List<PinLocations> pinLocations;
 				pinLocations = await CalMPG(newTrip, newVehicle);
 
-
+				user.Vehicle = newVehicle;
+				user.VehicleId = newVehicle.VehicleId;
 				db.Trips.Add(newTrip);
 				db.SaveChanges();
 
-				user.Vehicle = newVehicle;
+				
 
 				TripWeatherView tripWeatherView = new TripWeatherView()
 				{
@@ -591,7 +592,7 @@ namespace TripRadar.Controllers
 			else
 			{
 				var userVehicle = db.Vehicles.SingleOrDefault(d => d.VehicleYear == vehicle.VehicleYear && d.VehicleModel == vehicle.VehicleModel && d.VehicleMake == vehicle.VehicleMake);
-				//userVehicle.VehicleId = vehicle.VehicleId;
+				userVehicle.VehicleId = vehicle.VehicleId;
 				db.SaveChanges();
 				return userVehicle;
 			}
@@ -648,9 +649,9 @@ namespace TripRadar.Controllers
 
 		public async Task<ActionResult> Places(int zip, int id)
 		{
-			try
-			{
-				TripViewModel newModel;
+            try
+            {
+                TripViewModel newModel;
 				var trip = db.Trips.SingleOrDefault(v => v.TripID == id);
 				var user = GetUser();
 				var vehicle = db.Vehicles.SingleOrDefault(v => v.VehicleId == user.VehicleId);
@@ -683,19 +684,19 @@ namespace TripRadar.Controllers
 					ProjectedZip = ProjectedZip
 				};
 				return View(newModel);
-			}
-			catch
-			{
-				var trip = db.Trips.SingleOrDefault(v => v.TripID == id);
-				var weather = db.Weathers.SingleOrDefault(w => w.WeatherId == trip.WeatherID);
-				var view = new TripViewModel
-				{
-					Trip = trip,
-					ProjectedZip = zip
-				};
-				return View("LastPlace", view);
-			}
-		}
+            }
+            catch
+            {
+                var trip = db.Trips.SingleOrDefault(v => v.TripID == id);
+                var weather = db.Weathers.SingleOrDefault(w => w.WeatherId == trip.WeatherID);
+                var view = new TripViewModel
+                {
+                    Trip = trip,
+                    ProjectedZip = zip
+                };
+                return View("LastPlace", view);
+            }
+        }
 		public async Task<ActionResult> WatchWeather(int id)
 		{
 			var trip = db.Trips.SingleOrDefault(v => v.TripID == id);
@@ -720,12 +721,19 @@ namespace TripRadar.Controllers
 					var stringResult = await response.Content.ReadAsStringAsync();
 					var json = JObject.Parse(stringResult);
 					var resultCount = json["results"][0]["address_components"].Count();
-					var index = resultCount - 1;
-					var zip = json["results"][0]["address_components"][index]["long_name"].ToString();
-					int zipCode = Convert.ToInt32(zip);
-
-					Zips.Add(zipCode);
-				}
+					var zip = 0;
+                    //var index = resultCount - 1;
+                    for(int j =0; j <resultCount; j++)
+                    {
+                        var test = json["results"][0]["address_components"][j]["types"][0].ToObject<string>();
+                        if (test == "postal_code")
+                        {
+                            zip = json["results"][0]["address_components"][j]["long_name"].ToObject<int>();
+                            break;
+                        }
+                    }
+                    Zips.Add(zip);
+                }
 			}
 			return Zips;
 		}
